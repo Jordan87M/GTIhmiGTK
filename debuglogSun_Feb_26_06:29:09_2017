@@ -1,0 +1,44 @@
+
+Sun_Feb_26_06:29:09_2017: Misdirected Message
+Sun_Feb_26_06:29:09_2017: Unimplemented Protocol
+Sun_Feb_26_06:29:09_2017: Unimplemented Function
+Sun_Feb_26_06:29:09_2017: GP_ACK
+Sun_Feb_26_06:29:09_2017: Inverter Waking Up
+Sun_Feb_26_06:29:09_2017: Set Phase
+Sun_Feb_26_06:29:09_2017: Set Amplitude
+Sun_Feb_26_06:29:09_2017: Set Real Power
+Sun_Feb_26_06:29:09_2017: Set Reactive Power
+Sun_Feb_26_06:29:09_2017: Set Frequency
+Sun_Feb_26_06:29:09_2017: Select Grid Following
+Sun_Feb_26_06:29:09_2017: Select Standalone
+Sun_Feb_26_06:29:09_2017: Disconnect
+Sun_Feb_26_06:29:09_2017: Connect
+Sun_Feb_26_06:29:09_2017: Lock Screen
+Sun_Feb_26_06:29:09_2017: Unlock Screen
+Sun_Feb_26_06:29:09_2017: Display Screen1
+Sun_Feb_26_06:29:09_2017: Display Screen2
+Sun_Feb_26_06:29:09_2017: Display Screen3
+Sun_Feb_26_06:29:09_2017: Display Screen4
+Sun_Feb_26_06:29:09_2017: Request Phase
+Sun_Feb_26_06:29:09_2017: Request Amplitude
+Sun_Feb_26_06:29:09_2017: Request Current Mode
+Sun_Feb_26_06:29:09_2017: Request PWM Period
+Sun_Feb_26_06:29:09_2017: Request nsamples
+Sun_Feb_26_06:29:09_2017: Request Output Voltage
+Sun_Feb_26_06:29:09_2017: Request Output Current
+Sun_Feb_26_06:29:09_2017: Request Real Power
+Sun_Feb_26_06:29:09_2017: Request Reactive Power
+Sun_Feb_26_06:29:09_2017: Request Frequency
+Sun_Feb_26_06:29:09_2017: Response: Phase
+Sun_Feb_26_06:29:09_2017: Response: Amplitude
+Sun_Feb_26_06:29:09_2017: Response: Current Mode
+Sun_Feb_26_06:29:09_2017: Response: PWM Period
+Sun_Feb_26_06:29:09_2017: Response: nsamples
+Sun_Feb_26_06:29:09_2017: Response: Output Voltage
+Sun_Feb_26_06:29:09_2017: Response: Output Current
+Sun_Feb_26_06:29:09_2017: Response: Real Power
+Sun_Feb_26_06:29:09_2017: Response: Reactive Power
+Sun_Feb_26_06:29:09_2017: Response: Frequency
+Sun_Feb_26_06:29:11_2017: GTK application finishes with retval: 0
+Sun_Feb_26_06:29:11_2017: data log file closed with return value: 0
+Sun_Feb_26_06:29:11_2017: getting ready to close debug log file... bye!
