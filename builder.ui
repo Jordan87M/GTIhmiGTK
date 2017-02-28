@@ -2,46 +2,21 @@
 <interface>
   <template class="GtihmiAppWindow" parent="GtkApplicationWindow">
     <property name="title" translatable="yes">Example Application</property>
-    <property name="default-width">600</property>
-    <property name="default-height">400</property>
+    <property name="default-width">900</property>
+    <property name="default-height">600</property>
     <child>
-      <object class="GtkBox" id="content_box">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
+      <object class="GtkBox" id="singlemessagebox">
         <child>
-          <object id="button1" class="GtkButton">
+          <object class="GtkScrolledWindow" id="signallistscroll">
             <property name="visible">True</property>
-            <property name="label">Button 1</property>
+            <child>
+              <object class="GtkListBox" id="signallistbox">
+                <property name="visible">True</property>
+              </object>
+            </child>
           </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object id="button2" class="GtkButton">
-            <property name="visible">True</property>
-            <property name="label">Button 2</property>
-          </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object id="quit" class="GtkButton">
-            <property name="visible">True</property>
-            <property name="label">Quit</property>
-          </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">1</property>
-            <property name="width">2</property>
-          </packing>
         </child>
       </object>
-      <packing>
-      </packing>
     </child>
   </template>
 </interface>

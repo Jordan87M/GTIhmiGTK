@@ -29,5 +29,7 @@ GtihmiAppWindow * gtihmi_app_window_new(GtihmiApp *app)
 
 void gtihmi_app_window_open(GtihmiAppWindow *win, GFile *file)
 {
-
+    //populate signallistbox
+    newrow = gtk_list_box_row_new();
+    gtk_list_box_insert(signallistbox,newrow,0);
 }
