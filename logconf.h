@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#define LOG_BUFFER_SIZE     512
+
 extern FILE *debuglog;
 extern FILE *datalog;
 

@@ -1,12 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
 #include "gpdefs.h"
 #include "gtihmi.h"
+#include "logconf.h"
 
 
 //global gui pointers
+
+GtkListStore *store;
+GtkTreeIter iter;
+GtkCellRenderer *renderer;
+GtkTreeModel *model;
 
 GtkWidget *window;
 GtkWidget *fixed;
@@ -22,6 +30,7 @@ GtkWidget *newinverterbox;
 GtkWidget *newmacbox;
 GtkWidget *newipbox;
 GtkWidget *createbutton;
+GtkWidget *activetree;
 
 GtkWidget *newnameentry;
 GtkWidget *newnamelabel;
@@ -51,7 +60,19 @@ GtkWidget *signalname;
 //debugging globals
 FILE *debuglog;
 FILE *datalog;
-char debugbuffer[128];
+char debugbuffer[LOG_BUFFER_SIZE];
+
+//socket globals
+int socket_desc;
+
+
+//other globals
+GTIinfo gtilist[MAX_N_INVERTERS];
+int selected[MAX_N_INVERTERS];
+int chosen[MAX_MSG_COMP];
+unsigned short int globalseqnum;
+
+int inverterinsertindex;
 
 
 static void activate(GtkApplication *app, gpointer user_data);
@@ -65,9 +86,6 @@ int main(int argc, char *argv[])
     GtkApplication *app;
 
     //gui dimensional variables
-
-
-
     int retval;
 
 
@@ -95,6 +113,9 @@ int main(int argc, char *argv[])
     //print signal list for debugging
     printfullsignallist(debuglog);
 
+
+
+
     app = gtk_application_new("sevelevlabs.gti.hmi",G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app,"activate",G_CALLBACK(activate), NULL);
     retval = g_application_run(G_APPLICATION(app), argc, argv);
@@ -118,14 +139,15 @@ static void activate(GtkApplication* app, gpointer user_data)
 {
     int i;
 
+    //variables to help coordinate widget positioning
     int horz_marg = 20;
     int top_marg = 5;
     int horz_dim = 900;
     int vert_dim = 600;
     int frame_width = horz_dim-2*horz_marg;
-    int frame_height = 80;
+    int frame_height = 60;
     int sigbox_width = 180;
-    int sigbox_height = 300;
+    int sigbox_height = 240;
     int sigbox_space = 20;
     int std_but_width = 80;
     int std_but_height = 10;
@@ -133,13 +155,15 @@ static void activate(GtkApplication* app, gpointer user_data)
     int sm_but_width = 20;
     int sm_but_height = 10;
     int sm_but_space_y = 5;
+    int active_view_height = 280;
+    int active_view_width = horz_dim - 2*horz_marg;
 
-    int sig_row_y = top_marg + frame_height + 5;
+    int sig_row_y = top_marg + frame_height + 10;
     int chosen_box_xpos = horz_marg + sigbox_width + std_but_width + 2*sigbox_space;
     int chosen_but_xpos = horz_marg + sigbox_width + sigbox_space;
     int chosen_top_ypos = sig_row_y + 20;
     int chosen_bot_ypos = chosen_top_ypos + std_but_height + 2*std_but_space_y;
-
+    int active_view_ypos = sig_row_y + sigbox_height + 20;
 
 
     window = gtk_application_window_new(app);
@@ -199,6 +223,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     newnameentry = gtk_entry_new();
     gtk_container_add(GTK_CONTAINER(newinverterbox),newnameentry);
     gtk_widget_set_size_request(newnameentry,std_but_width,std_but_height);
+    gtk_entry_set_max_length(newnameentry,MAX_NAME_LENGTH);
 
     newmaclabel = gtk_label_new("MAC:");
     gtk_container_add(GTK_CONTAINER(newmacbox),newmaclabel);
@@ -268,7 +293,79 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_size_request(createbutton,std_but_width,std_but_height);
     g_signal_connect(createbutton,"clicked",G_CALLBACK(addnewinverter),NULL);
 
+    store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    activetree = gtk_tree_view_new();
+    renderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 0, "Name", renderer, "text", 0);
+    renderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 1, "IP Address", renderer, "text", 1);
+    renderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 2, "MAC Address", renderer, "text", 2);
+
+
+    gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+    //g_object_unref(model);
+    /*
+    activetreenamecol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(activetreenamecol,"Name");
+    gtk_tree_view_column_set_min_width(activetreenamecol, MAX_NAME_LENGTH);
+    activetreeipcol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(activetreeipcol,"IP Address");
+    activetreemaccol = gtk_tree_view_column_new();
+    gtk_tree_view_column_set_title(activetreemaccol,"MAC Address");
+
+    gtk_tree_view_append_column(activetree, activetreenamecol);
+    gtk_tree_view_append_column(activetree, activetreemaccol);
+    gtk_tree_view_append_column(activetree, activetreeipcol);
+    */
+    gtk_fixed_put(fixed,activetree,horz_marg, active_view_ypos);
+    gtk_widget_set_size_request(activetree, active_view_width, active_view_height);
+
     gtk_widget_show_all(window);
+
+}
+
+int sendtoenabled(GtkWidget *widget, gpointer data)
+{
+    int i;
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(selected[i] == 1)
+        {
+            sendmessagetoinverter(i);
+        }
+    }
+
+}
+
+int sendmessagetoinverter(int i)
+{
+    int socket_desc;
+    struct sockaddr_in server;
+    char sendbuffer[1024];
+    char recbuffer[1024];
+
+    gpheader head;
+
+    head.magic = GP_MAGIC;
+    head.context = INVERTER_CONTEXT;
+    head.seqnum = globalseqnum;
+
+
+    //build message packet
+
+
+    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
+    if(socket_desc == -1)
+    {
+        printf("could not create socket");
+        logwriteln(debuglog,"coudl not open socket");
+    }
+
+    server.sin_addr.s_addr = inet_addr(gtilist[i].ipaddr);
+    server.sin_family = AF_INET;
+    server.sin_port = htons(GP_PORT);
+
 }
 
 int choosesignalcallback(GtkWidget *widget, gpointer data)
@@ -309,17 +406,113 @@ int unchoosesignalcallback(GtkWidget *widget, gpointer data)
 
 int addnewinverter(GtkWidget *widget, gpointer data)
 {
-    int ipt1;
-    int ip2;
-    int ip3;
-    int ip4;
+    if(inverterinsertindex >= 0)
+    {
+        int i;
 
-    char mac1[2];
-    char mac2[2];
-    char mac3[2];
-    char mac4[2];
-    char mac5[2];
-    char mac6[2];
+        FILE *fp;
+        char retval[1024];
+
+        char name[48];
+
+        char ip1[3];
+        char ip2[3];
+        char ip3[3];
+        char ip4[3];
+        char ipaddr[15];
+
+        char mac1[2];
+        char mac2[2];
+        char mac3[2];
+        char mac4[2];
+        char mac5[2];
+        char mac6[2];
+        char macaddr[17];
+
+        char arpcommand[48];
+
+        strcpy(name,gtk_entry_get_text(newnameentry));
+
+        strcpy(ip1,gtk_entry_get_text(newipoctet1));
+        strcpy(ip2,gtk_entry_get_text(newipoctet2));
+        strcpy(ip3,gtk_entry_get_text(newipoctet3));
+        strcpy(ip4,gtk_entry_get_text(newipoctet4));
+
+        strcpy(mac1,gtk_entry_get_text(newmacbyte1));
+        strcpy(mac2,gtk_entry_get_text(newmacbyte2));
+        strcpy(mac3,gtk_entry_get_text(newmacbyte3));
+        strcpy(mac4,gtk_entry_get_text(newmacbyte4));
+        strcpy(mac5,gtk_entry_get_text(newmacbyte5));
+        strcpy(mac6,gtk_entry_get_text(newmacbyte6));
+
+        //make full ip address
+        snprintf(ipaddr,16,"%s.%s.%s.%s",ip1,ip2,ip3,ip4);
+        //make full mac address
+        snprintf(macaddr,18,"%s:%s:%s:%s:%s:%s",mac1,mac2,mac3,mac4,mac5,mac6);
+        snprintf(debugbuffer,256,"attempting to create static arp cache entry for inverter %s (%s), at %s", name, macaddr, ipaddr);
+        logwriteln(debuglog,debugbuffer);
+        //form command to add inverter as static arp entry
+        snprintf(arpcommand,48,"arp -s %s %s 2>&1", ipaddr, macaddr);
+
+        //add inverter info to active tree
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, name, 1, ipaddr, 2, macaddr,-1);
+        model = GTK_TREE_MODEL(store);
+        gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+
+        gtk_widget_show_all(window);
+
+        //update GTIlist array
+        strcpy(gtilist[inverterinsertindex].name,name);
+        strcpy(gtilist[inverterinsertindex].ipaddr,ipaddr);
+        strcpy(gtilist[inverterinsertindex].macaddr,macaddr);
+        gtilist[inverterinsertindex].extant = 1;
+        //find a place to put the next inverter
+        for(i = 0; i< MAX_N_INVERTERS; i++)
+        {
+            if(gtilist[i].extant == 0)
+            {
+                inverterinsertindex = i;
+                break;
+            }
+            if(i == MAX_N_INVERTERS-1)
+            {
+                printf("\ninverter list is full");
+                logwriteln(debuglog,"inverter list is full");
+                inverterinsertindex = -1;
+            }
+        }
+
+        //write command to stdin
+        fp = popen(arpcommand,"r");
+        if(fp == NULL)
+        {
+            printf("\ndidn't run command: %s",arpcommand);
+            sprintf(debugbuffer,"failed to run command: %s",arpcommand);
+            logwriteln(debuglog,debugbuffer);
+        }
+
+        //read output
+        while(fgets(retval,sizeof(retval)-1, fp) != NULL)
+        {
+            logwriteln(debuglog,retval);
+        }
+        pclose(fp);
+
+
+        return 0;
+    }
+    else
+    {
+        printf("\ntried to add inverter to full list");
+        logwriteln(debuglog,"tried to add inverter to full list");
+        return -1;
+    }
+}
+
+int removeinverter(GtkWidget *widget, gpointer data)
+{
 
     return 0;
 }
+

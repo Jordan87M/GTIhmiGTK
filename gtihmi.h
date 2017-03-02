@@ -3,8 +3,18 @@
 
 #include <gtk.h>
 
-#define GTIHMI_APP_TYPE (gtihmi_app_get_type ())
-G_DECLARE_FINAL_TYPE(GtihmiApp, gtihmi_app, GTIHMI, APP, GtkApplication)
-GtihmiApp *gtihmi_app_new(void);
+#define MAX_N_INVERTERS         10
+#define MAX_NAME_LENGTH         48
+#define MAX_MSG_COMP            5
+
+typedef struct GTIinfo_t{
+    char name[MAX_NAME_LENGTH];
+    char ipaddr[15];
+    char macaddr[17];
+    int oneoffenable;
+    int schedenable;
+    int extant;
+
+} GTIinfo;
 
 #endif

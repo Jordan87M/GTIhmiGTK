@@ -1,11 +1,13 @@
 #ifndef GPDEFS_H
 #define GPDEFS_H
 
-#define GP_MAGIC 0xa3cf
+#define GP_PORT                         30000
 
-#define INVERTER_CONTEXT    0x01
-#define CAES_CONTEXT        0x02
-#define CONTROLLER_CONTEXT  0x00
+#define GP_MAGIC                        0xa3cf
+
+#define INVERTER_CONTEXT                0x01
+#define CAES_CONTEXT                    0x02
+#define CONTROLLER_CONTEXT              0x00
 
 //message type codes
 //comms
