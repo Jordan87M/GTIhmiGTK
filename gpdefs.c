@@ -204,12 +204,12 @@ void makefullsignallist(void)
 
 }
 
-void printfullsignallist(FILE *fp)
+void printfullsignallist(char *filename)
 {
 
     int i = 0;
     for(i = 0; i < sizeof(signallist)/sizeof(signallist[0]); i++)
     {
-        logwriteln(fp, signallist[i].name);
+        logwriteln(filename, signallist[i].name);
     }
 }

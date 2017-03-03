@@ -3,8 +3,11 @@
 #include "logconf.h"
 
 
-int logwriteln(FILE *fp, const char *line)
+int logwriteln(char *filename, const char *line)
 {
+    FILE *fp;
+    fp = fopen(filename,"a");
+
     time_t now;
     struct tm *timeinfo;
     char timebuff[64];
@@ -13,7 +16,8 @@ int logwriteln(FILE *fp, const char *line)
     snprintf(timebuff, 64, "%s",asctime(timeinfo));
     replaceandclean(timebuff,' ','_');
 
-    return fprintf(fp, "\n%s: %s",timebuff, line);
+    fprintf(fp, "\n%s: %s",timebuff, line);
+    fclose(fp);
 }
 
 int replaceandclean(char *strptr, char from, char to)

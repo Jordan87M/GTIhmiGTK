@@ -30,6 +30,7 @@ GtkWidget *newinverterbox;
 GtkWidget *newmacbox;
 GtkWidget *newipbox;
 GtkWidget *createbutton;
+GtkWidget *removebutton;
 GtkWidget *activetree;
 
 GtkWidget *newnameentry;
@@ -58,8 +59,8 @@ GtkWidget *newipoctet4;
 GtkWidget *signalname;
 
 //debugging globals
-FILE *debuglog;
-FILE *datalog;
+char debugfilename[64];
+char datafilename[64];
 char debugbuffer[LOG_BUFFER_SIZE];
 
 //socket globals
@@ -72,14 +73,21 @@ int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 unsigned short int globalseqnum;
 
-int inverterinsertindex;
+int inverterinsertindex = 0;
+enum
+{
+    COL_NAME = 0,
+    COL_IPADDR,
+    COL_MACADDR
+};
 
 
 static void activate(GtkApplication *app, gpointer user_data);
 int choosesignalcallback(GtkWidget *widget, gpointer data);
 int unchoosesignalcallback(GtkWidget *widget, gpointer data);
 int addnewinverter(GtkWidget *widget, gpointer data);
-
+int removeinverter(GtkWidget *wdiget, gpointer data);
+int getindexfromip(char* ipaddr);
 
 int main(int argc, char *argv[])
 {
@@ -89,8 +97,6 @@ int main(int argc, char *argv[])
     int retval;
 
 
-    char debugfilename[64];
-    char datafilename[64];
     char namebuffer[64];
     time_t now;
     struct tm *timeinfo;
@@ -102,19 +108,12 @@ int main(int argc, char *argv[])
     snprintf(debugfilename,64,"debuglog%s",namebuffer);
     snprintf(datafilename,64,"datalog%s.csv",namebuffer);
 
-
-    debuglog = fopen(debugfilename,"w");
-    datalog = fopen(datafilename,"w");
-
     //create arrays of signal structures
     setupsignals();
     makefullsignallist();
 
     //print signal list for debugging
-    printfullsignallist(debuglog);
-
-
-
+    printfullsignallist(debugfilename);
 
     app = gtk_application_new("sevelevlabs.gti.hmi",G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app,"activate",G_CALLBACK(activate), NULL);
@@ -124,15 +123,9 @@ int main(int argc, char *argv[])
     printf("process closed with retval: %d",retval);
 
     snprintf(debugbuffer, 128, "GTK application finishes with retval: %d",retval);
-    logwriteln(debuglog,debugbuffer);
+    logwriteln(debugfilename,debugbuffer);
 
-    retval = fclose(datalog);
-    snprintf(debugbuffer,128,"data log file closed with return value: %d",retval);
-    logwriteln(debuglog,debugbuffer);
-
-    logwriteln(debuglog,"getting ready to close debug log file... bye!");
-    fclose(debuglog);
-
+    logwriteln(debugfilename,"bye!");
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -155,7 +148,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     int sm_but_width = 20;
     int sm_but_height = 10;
     int sm_but_space_y = 5;
-    int active_view_height = 280;
+    int active_view_height = 260;
     int active_view_width = horz_dim - 2*horz_marg;
 
     int sig_row_y = top_marg + frame_height + 10;
@@ -164,7 +157,8 @@ static void activate(GtkApplication* app, gpointer user_data)
     int chosen_top_ypos = sig_row_y + 20;
     int chosen_bot_ypos = chosen_top_ypos + std_but_height + 2*std_but_space_y;
     int active_view_ypos = sig_row_y + sigbox_height + 20;
-
+    int remove_but_xpos = horz_dim - std_but_width - horz_marg;
+    int remove_but_ypos = active_view_ypos - std_but_height - 20;
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "GTI interface");
@@ -293,14 +287,19 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_size_request(createbutton,std_but_width,std_but_height);
     g_signal_connect(createbutton,"clicked",G_CALLBACK(addnewinverter),NULL);
 
+    removebutton = gtk_button_new_with_label("REMOVE");
+    gtk_fixed_put(fixed, removebutton, remove_but_xpos, remove_but_ypos);
+    gtk_widget_set_size_request(removebutton,std_but_width, std_but_height);
+    g_signal_connect(removebutton,"clicked",G_CALLBACK(removeinverter),NULL);
+
     store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     activetree = gtk_tree_view_new();
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 0, "Name", renderer, "text", 0);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_NAME, "Name", renderer, "text", 0);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 1, "IP Address", renderer, "text", 1);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_IPADDR, "IP Address", renderer, "text", 1);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 2, "MAC Address", renderer, "text", 2);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_MACADDR, "MAC Address", renderer, "text", 2);
 
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
@@ -359,7 +358,7 @@ int sendmessagetoinverter(int i)
     if(socket_desc == -1)
     {
         printf("could not create socket");
-        logwriteln(debuglog,"coudl not open socket");
+        logwriteln(debugfilename,"coudl not open socket");
     }
 
     server.sin_addr.s_addr = inet_addr(gtilist[i].ipaddr);
@@ -382,7 +381,7 @@ int choosesignalcallback(GtkWidget *widget, gpointer data)
 
     //maintain log
     snprintf(debugbuffer,128,"adding component to message: %s",signallist[index].name);
-    logwriteln(debuglog,debugbuffer);
+    logwriteln(debugfilename,debugbuffer);
     //make new line visible
     gtk_widget_show_all(chosensignallistbox);
     return 0;
@@ -399,7 +398,7 @@ int unchoosesignalcallback(GtkWidget *widget, gpointer data)
 
     //maintain log
     snprintf(debugbuffer,128,"removing component from message: %d",index);
-    logwriteln(debuglog,debugbuffer);
+    logwriteln(debugfilename,debugbuffer);
 
     return 0;
 }
@@ -409,6 +408,7 @@ int addnewinverter(GtkWidget *widget, gpointer data)
     if(inverterinsertindex >= 0)
     {
         int i;
+        int approval;
 
         FILE *fp;
         char retval[1024];
@@ -445,74 +445,191 @@ int addnewinverter(GtkWidget *widget, gpointer data)
         strcpy(mac5,gtk_entry_get_text(newmacbyte5));
         strcpy(mac6,gtk_entry_get_text(newmacbyte6));
 
+
         //make full ip address
         snprintf(ipaddr,16,"%s.%s.%s.%s",ip1,ip2,ip3,ip4);
         //make full mac address
         snprintf(macaddr,18,"%s:%s:%s:%s:%s:%s",mac1,mac2,mac3,mac4,mac5,mac6);
-        snprintf(debugbuffer,256,"attempting to create static arp cache entry for inverter %s (%s), at %s", name, macaddr, ipaddr);
-        logwriteln(debuglog,debugbuffer);
-        //form command to add inverter as static arp entry
-        snprintf(arpcommand,48,"arp -s %s %s 2>&1", ipaddr, macaddr);
 
-        //add inverter info to active tree
-        gtk_list_store_append(store, &iter);
-        gtk_list_store_set(store, &iter, 0, name, 1, ipaddr, 2, macaddr,-1);
-        model = GTK_TREE_MODEL(store);
-        gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
-
-        gtk_widget_show_all(window);
-
-        //update GTIlist array
-        strcpy(gtilist[inverterinsertindex].name,name);
-        strcpy(gtilist[inverterinsertindex].ipaddr,ipaddr);
-        strcpy(gtilist[inverterinsertindex].macaddr,macaddr);
-        gtilist[inverterinsertindex].extant = 1;
-        //find a place to put the next inverter
-        for(i = 0; i< MAX_N_INVERTERS; i++)
+        //check to see if the new entry is valid
+        approval = 1;
+        for(i = 0; i < MAX_N_INVERTERS; i++)
         {
-            if(gtilist[i].extant == 0)
+            //for all inverters that currently exist
+            if(gtilist[i].extant == 1)
             {
-                inverterinsertindex = i;
-                break;
-            }
-            if(i == MAX_N_INVERTERS-1)
-            {
-                printf("\ninverter list is full");
-                logwriteln(debuglog,"inverter list is full");
-                inverterinsertindex = -1;
+                sprintf(debugbuffer,"comparing new ip: %s to existing ip: %s",ipaddr, gtilist[i].ipaddr);
+                logwriteln(debugfilename,debugbuffer);
+                //check for duplicate ip address or mac addresses
+                if(strcmp(gtilist[i].ipaddr,ipaddr) == 0 )
+                {
+                    approval = 0;
+                    sprintf(debugbuffer,"found duplicate IP address: %s",ipaddr);
+                    logwriteln(debugfilename,debugbuffer);
+                }
+                else if(strcmp(gtilist[i].macaddr,macaddr) == 0)
+                {
+                    approval = 0;
+                    sprintf(debugbuffer,"found duplicate MAC address: %s",macaddr);
+                    logwriteln(debugfilename,debugbuffer);
+                }
             }
         }
 
-        //write command to stdin
-        fp = popen(arpcommand,"r");
-        if(fp == NULL)
+        if(approval == 1)
         {
-            printf("\ndidn't run command: %s",arpcommand);
-            sprintf(debugbuffer,"failed to run command: %s",arpcommand);
-            logwriteln(debuglog,debugbuffer);
-        }
 
-        //read output
-        while(fgets(retval,sizeof(retval)-1, fp) != NULL)
+            snprintf(debugbuffer,256,"attempting to create static arp cache entry for inverter %s (%s), at %s", name, macaddr, ipaddr);
+            logwriteln(debugfilename,debugbuffer);
+            //form command to add inverter as static arp entry
+            snprintf(arpcommand,48,"arp -s %s %s 2>&1", ipaddr, macaddr);
+
+            //add inverter info to active tree
+            gtk_list_store_append(store, &iter);
+            gtk_list_store_set(store, &iter, COL_NAME, name, COL_IPADDR, ipaddr, COL_MACADDR, macaddr,-1);
+            model = GTK_TREE_MODEL(store);
+            gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+
+            gtk_widget_show_all(window);
+
+            //update GTIlist array
+            strcpy(gtilist[inverterinsertindex].name,name);
+            strcpy(gtilist[inverterinsertindex].ipaddr,ipaddr);
+            strcpy(gtilist[inverterinsertindex].macaddr,macaddr);
+            gtilist[inverterinsertindex].extant = 1;
+
+            sprintf(debugbuffer,"added inverter %s (%s) at %s in index %d",name,macaddr,ipaddr,inverterinsertindex);
+            logwriteln(debugfilename,debugbuffer);
+
+            //find a place to put the next inverter
+            for(i = 0; i< MAX_N_INVERTERS; i++)
+            {
+                if(gtilist[i].extant == 0)
+                {
+                    inverterinsertindex = i;
+                    break;
+                }
+                if(i == MAX_N_INVERTERS-1)
+                {
+                    printf("\ninverter list is full");
+                    logwriteln(debugfilename,"inverter list is full");
+                    inverterinsertindex = -1;
+                }
+            }
+
+            //write command to stdin
+            fp = popen(arpcommand,"r");
+            if(fp == NULL)
+            {
+                printf("\ndidn't run command: %s",arpcommand);
+                sprintf(debugbuffer,"failed to run command: %s",arpcommand);
+                logwriteln(debugfilename,debugbuffer);
+            }
+
+            //read output
+            while(fgets(retval,sizeof(retval)-1, fp) != NULL)
+            {
+                logwriteln(debugfilename,retval);
+            }
+            pclose(fp);
+
+
+            return 0;
+        }
+        else
         {
-            logwriteln(debuglog,retval);
+            logwriteln(debugfilename,"failed to create new entry in inverter list");
+            return -2;
         }
-        pclose(fp);
-
-
-        return 0;
     }
     else
     {
         printf("\ntried to add inverter to full list");
-        logwriteln(debuglog,"tried to add inverter to full list");
+        logwriteln(debugfilename,"tried to add inverter to full list");
         return -1;
     }
 }
 
 int removeinverter(GtkWidget *widget, gpointer data)
 {
+    int removeindex;
+
+    char commandbuffer[256];
+    char *name;
+    char *ipaddr;
+    char *macaddr;
+    char retval[1024];
+    FILE *fp;
+
+    GtkTreeSelection *activesel;
+    GtkTreeRowReference *activeselref;
+    GtkTreePath *activeselpath;
+    GtkTreeIter activeseliter;
+    GtkTreeModel *activemodel;
+    GList *activesellist;
+
+    //find out which inverter, if any, has been selected
+    activesel = gtk_tree_view_get_selection(activetree);
+    //logwriteln(debugfilename,"made it past activesel assignment");
+    activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
+    //logwriteln(debugfilename,"made it past activesellist assignment");
+    //activeselref = activesellist->data;
+    //logwriteln(debugfilename,"made it past activeselref assignment");
+    //activeselpath = gtk_tree_row_reference_get_path(activeselref);
+    //logwriteln(debugfilename,"made it past activeselpath assignment");
+    //gtk_tree_model_get_iter(model, &activeseliter, activeselpath);
+    //logwriteln(debugfilename,"made it past activeseliter assignment");
+    gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
+
+    sprintf(debugbuffer,"data from item selected for removal: %s %s %s",name,ipaddr,macaddr);
+    logwriteln(debugfilename,debugbuffer);
+
+    gtk_list_store_remove(store, &activeseliter);
+
+    //remove from gti structure list
+    removeindex = getindexfromip(ipaddr);
+    gtilist[removeindex].extant = 0;
+    sprintf(debugbuffer,"freed gtilist index %d", removeindex);
+    logwriteln(debugfilename,debugbuffer);
+
+    sprintf(debugbuffer,"found inverter %d at %s using IP %s and removed it from the list",removeindex, gtilist[removeindex].ipaddr, ipaddr);
+    logwriteln(debugfilename,debugbuffer);
+
+    snprintf(commandbuffer,256,"arp -d %s 2>&1", ipaddr);
+
+    snprintf(debugbuffer,1024,"attempting to remove static arp entry with command: %s",commandbuffer);
+    logwriteln(debugfilename,debugbuffer);
+
+
+    //write command to stdin
+    fp = popen(commandbuffer,"r");
+    if(fp == NULL)
+    {
+        printf("\ndidn't run command: %s",commandbuffer);
+        sprintf(debugbuffer,"failed to run command: %s",commandbuffer);
+        logwriteln(debugfilename,debugbuffer);
+    }
+
+
+    //read output
+    while(fgets(retval,sizeof(retval)-1, fp) != NULL)
+    {
+        logwriteln(debugfilename,retval);
+    }
+    pclose(fp);
 
     return 0;
 }
 
+int getindexfromip(char *ipaddr)
+{
+    int i;
+    for(i=0;i<MAX_N_INVERTERS;i++)
+    {
+        if(strcmp(gtilist[i].ipaddr,ipaddr) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
