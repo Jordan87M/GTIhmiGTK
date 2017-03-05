@@ -16,12 +16,17 @@ GtkTreeIter iter;
 GtkCellRenderer *renderer;
 GtkTreeModel *model;
 
+GtkListStore *sigstore;
+GtkTreeIter sigiter;
+GtkCellRenderer *sigrenderer;
+GtkTreeModel *sigmodel;
+
 GtkWidget *window;
 GtkWidget *fixed;
 
 GtkWidget *signallistbox;
 GtkWidget *signalscroll;
-GtkWidget *chosensignallistbox;
+GtkWidget *chosensignaltreeview;
 GtkWidget *chosenscroll;
 GtkWidget *choosesignalbutton;
 GtkWidget *rejectsignalbutton;
@@ -72,6 +77,7 @@ GTIinfo gtilist[MAX_N_INVERTERS];
 int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 unsigned short int globalseqnum;
+chosenmsg *chosenperm;
 
 int inverterinsertindex = 0;
 enum
@@ -79,6 +85,12 @@ enum
     COL_NAME = 0,
     COL_IPADDR,
     COL_MACADDR
+};
+
+enum
+{
+    COL_INDEX =0,
+    COL_SIGNAME
 };
 
 
@@ -97,16 +109,8 @@ int main(int argc, char *argv[])
     int retval;
 
 
-    char namebuffer[64];
-    time_t now;
-    struct tm *timeinfo;
-    time(&now);
-    timeinfo = localtime(&now);
-
-    snprintf(namebuffer,64,"%s",asctime(timeinfo));
-    replaceandclean(namebuffer,' ','_');
-    snprintf(debugfilename,64,"debuglog%s",namebuffer);
-    snprintf(datafilename,64,"datalog%s.csv",namebuffer);
+    sprintf(debugfilename,"debuglog");
+    logwriteln(debugfilename,"\n**********************\nBEGINNING NEW SESSION!\n********************\n");
 
     //create arrays of signal structures
     setupsignals();
@@ -114,6 +118,10 @@ int main(int argc, char *argv[])
 
     //print signal list for debugging
     printfullsignallist(debugfilename);
+
+    //initialize structure
+    chosenperm = createnewchosendllist();
+    //debugprintnodedata(chosenperm);
 
     app = gtk_application_new("sevelevlabs.gti.hmi",G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app,"activate",G_CALLBACK(activate), NULL);
@@ -142,6 +150,8 @@ static void activate(GtkApplication* app, gpointer user_data)
     int sigbox_width = 180;
     int sigbox_height = 240;
     int sigbox_space = 20;
+    int sigview_height = sigbox_height;
+    int sigview_width = 220;
     int std_but_width = 80;
     int std_but_height = 10;
     int std_but_space_y = 10;
@@ -173,7 +183,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     chosenscroll = gtk_scrolled_window_new(NULL,NULL);
     gtk_fixed_put(GTK_FIXED(fixed),chosenscroll,chosen_box_xpos, sig_row_y);
-    gtk_widget_set_size_request(chosenscroll,sigbox_width,sigbox_height);
+    gtk_widget_set_size_request(chosenscroll,sigview_width,sigview_height);
 
     signallistbox = gtk_list_box_new();
     gtk_container_add(GTK_CONTAINER(signalscroll),signallistbox);
@@ -185,8 +195,8 @@ static void activate(GtkApplication* app, gpointer user_data)
         gtk_list_box_insert(signallistbox,signalname,i);
     }
 
-    chosensignallistbox = gtk_list_box_new();
-    gtk_container_add(GTK_CONTAINER(chosenscroll),chosensignallistbox);
+    chosensignaltreeview = gtk_tree_view_new();
+    gtk_container_add(GTK_CONTAINER(chosenscroll),chosensignaltreeview);
 
     choosesignalbutton = gtk_button_new_with_label(">>");
     gtk_fixed_put(GTK_FIXED(fixed),choosesignalbutton,chosen_but_xpos,chosen_top_ypos);
@@ -301,24 +311,19 @@ static void activate(GtkApplication* app, gpointer user_data)
     renderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_MACADDR, "MAC Address", renderer, "text", 2);
 
-
     gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
-    //g_object_unref(model);
-    /*
-    activetreenamecol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(activetreenamecol,"Name");
-    gtk_tree_view_column_set_min_width(activetreenamecol, MAX_NAME_LENGTH);
-    activetreeipcol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(activetreeipcol,"IP Address");
-    activetreemaccol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(activetreemaccol,"MAC Address");
 
-    gtk_tree_view_append_column(activetree, activetreenamecol);
-    gtk_tree_view_append_column(activetree, activetreemaccol);
-    gtk_tree_view_append_column(activetree, activetreeipcol);
-    */
     gtk_fixed_put(fixed,activetree,horz_marg, active_view_ypos);
     gtk_widget_set_size_request(activetree, active_view_width, active_view_height);
+
+    sigstore = gtk_list_store_new(2,G_TYPE_INT,G_TYPE_STRING);
+    sigrenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_INDEX,"Index",sigrenderer,"text",0);
+    sigrenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_SIGNAME,"Name",sigrenderer,"text",1);
+
+    gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
+
 
     gtk_widget_show_all(window);
 
@@ -358,7 +363,7 @@ int sendmessagetoinverter(int i)
     if(socket_desc == -1)
     {
         printf("could not create socket");
-        logwriteln(debugfilename,"coudl not open socket");
+        logwriteln(debugfilename,"could not open socket");
     }
 
     server.sin_addr.s_addr = inet_addr(gtilist[i].ipaddr);
@@ -369,36 +374,62 @@ int sendmessagetoinverter(int i)
 
 int choosesignalcallback(GtkWidget *widget, gpointer data)
 {
+
     GtkWidget *transferrow;
-    GtkWidget *addrow;
     int index;
 
     transferrow = gtk_list_box_get_selected_row(signallistbox);
     index = (int) gtk_list_box_row_get_index(transferrow);
 
-    addrow = gtk_label_new(signallist[index].name);
-    gtk_list_box_insert(chosensignallistbox,addrow,0);
+
+    gtk_list_store_append(sigstore, &sigiter);
+    gtk_list_store_set(sigstore,&sigiter, COL_INDEX, index, COL_SIGNAME, signallist[index].name,-1);
+    sigmodel = GTK_TREE_MODEL(sigstore);
+    gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
+
 
     //maintain log
     snprintf(debugbuffer,128,"adding component to message: %s",signallist[index].name);
     logwriteln(debugfilename,debugbuffer);
     //make new line visible
-    gtk_widget_show_all(chosensignallistbox);
+    gtk_widget_show_all(window);
+
+    //add to list of chosen messages
+    insertchosenmsg(chosenperm,index);
+    logwriteln(debugfilename,"here's our list of message types now:");
+    traverseright(chosenperm,debugprintnodedata);
+
+
     return 0;
 }
 
+
+
 int unchoosesignalcallback(GtkWidget *widget, gpointer data)
 {
-    GtkWidget *removerow;
-    int index;
+    GtkTreeSelection *activesel;
+    GtkTreeRowReference *activeselref;
+    GtkTreePath *activeselpath;
+    GtkTreeIter activeseliter;
+    GtkTreeModel *activemodel;
+    GList *activesellist;
 
-    removerow = gtk_list_box_get_selected_row(chosensignallistbox);
-    index = (int) gtk_list_box_row_get_index(removerow);
-    gtk_container_remove(chosensignallistbox,removerow);
+    int *index;
+    char *signame;
+
+    //find out which inverter, if any, has been selected
+    activesel = gtk_tree_view_get_selection(chosensignaltreeview);
+    activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
+    gtk_tree_model_get(activemodel,&activeseliter,COL_INDEX,&index,COL_SIGNAME,&signame,-1);
+
+    sprintf(debugbuffer,"data from signal selected for removal: %d %s",index, signame);
+    logwriteln(debugfilename,debugbuffer);
+
+    gtk_list_store_remove(sigstore, &activeseliter);
 
     //maintain log
-    snprintf(debugbuffer,128,"removing component from message: %d",index);
-    logwriteln(debugfilename,debugbuffer);
+    logwriteln(debugfilename,"here's what the message list looks like now");
+    traverserightandremove(chosenperm,debugprintnodedata,index);
 
     return 0;
 }
@@ -570,15 +601,7 @@ int removeinverter(GtkWidget *widget, gpointer data)
 
     //find out which inverter, if any, has been selected
     activesel = gtk_tree_view_get_selection(activetree);
-    //logwriteln(debugfilename,"made it past activesel assignment");
     activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
-    //logwriteln(debugfilename,"made it past activesellist assignment");
-    //activeselref = activesellist->data;
-    //logwriteln(debugfilename,"made it past activeselref assignment");
-    //activeselpath = gtk_tree_row_reference_get_path(activeselref);
-    //logwriteln(debugfilename,"made it past activeselpath assignment");
-    //gtk_tree_model_get_iter(model, &activeseliter, activeselpath);
-    //logwriteln(debugfilename,"made it past activeseliter assignment");
     gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
 
     sprintf(debugbuffer,"data from item selected for removal: %s %s %s",name,ipaddr,macaddr);
