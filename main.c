@@ -37,6 +37,7 @@ GtkWidget *newipbox;
 GtkWidget *createbutton;
 GtkWidget *removebutton;
 GtkWidget *activetree;
+GtkWidget *sendbutton;
 
 GtkWidget *newnameentry;
 GtkWidget *newnamelabel;
@@ -78,6 +79,11 @@ int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 unsigned short int globalseqnum;
 chosenmsg *chosenperm;
+gpheader globalhead = {.magic = GP_MAGIC,
+                        .seqnum = INITIAL_SEQNUM,
+                        .context = INVERTER_CONTEXT};
+
+
 
 int inverterinsertindex = 0;
 enum
@@ -90,7 +96,8 @@ enum
 enum
 {
     COL_INDEX =0,
-    COL_SIGNAME
+    COL_SIGNAME,
+    COL_VALUE
 };
 
 
@@ -100,6 +107,8 @@ int unchoosesignalcallback(GtkWidget *widget, gpointer data);
 int addnewinverter(GtkWidget *widget, gpointer data);
 int removeinverter(GtkWidget *wdiget, gpointer data);
 int getindexfromip(char* ipaddr);
+int sendoneoff(GtkWidget *widget, gpointer data);
+void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data);
 
 int main(int argc, char *argv[])
 {
@@ -151,7 +160,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     int sigbox_height = 240;
     int sigbox_space = 20;
     int sigview_height = sigbox_height;
-    int sigview_width = 220;
+    int sigview_width = 240;
     int std_but_width = 80;
     int std_but_height = 10;
     int std_but_space_y = 10;
@@ -169,6 +178,8 @@ static void activate(GtkApplication* app, gpointer user_data)
     int active_view_ypos = sig_row_y + sigbox_height + 20;
     int remove_but_xpos = horz_dim - std_but_width - horz_marg;
     int remove_but_ypos = active_view_ypos - std_but_height - 20;
+    int send_but_xpos = chosen_box_xpos + sigview_width + sigbox_space;
+    int send_but_ypos = chosen_top_ypos;
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "GTI interface");
@@ -302,6 +313,11 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_size_request(removebutton,std_but_width, std_but_height);
     g_signal_connect(removebutton,"clicked",G_CALLBACK(removeinverter),NULL);
 
+    sendbutton = gtk_button_new_with_label("SEND");
+    gtk_fixed_put(fixed, sendbutton, send_but_xpos, send_but_ypos);
+    gtk_widget_set_size_request(sendbutton,std_but_width, std_but_height);
+    g_signal_connect(sendbutton,"clicked",G_CALLBACK(sendoneoff),NULL);
+
     store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     activetree = gtk_tree_view_new();
     renderer = gtk_cell_renderer_text_new();
@@ -316,11 +332,15 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_fixed_put(fixed,activetree,horz_marg, active_view_ypos);
     gtk_widget_set_size_request(activetree, active_view_width, active_view_height);
 
-    sigstore = gtk_list_store_new(2,G_TYPE_INT,G_TYPE_STRING);
+    sigstore = gtk_list_store_new(3,G_TYPE_INT,G_TYPE_STRING,G_TYPE_DOUBLE);
     sigrenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_INDEX,"Index",sigrenderer,"text",0);
     sigrenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_SIGNAME,"Name",sigrenderer,"text",1);
+    sigrenderer = gtk_cell_renderer_text_new();
+    g_object_set(sigrenderer,"editable",TRUE,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_VALUE,"Value",sigrenderer,"text",2);
+    g_signal_connect(sigrenderer,"edited",value_edited_callback, NULL);
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
 
@@ -329,34 +349,94 @@ static void activate(GtkApplication* app, gpointer user_data)
 
 }
 
-int sendtoenabled(GtkWidget *widget, gpointer data)
+void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data)
 {
-    int i;
-    for(i = 0; i < MAX_N_INVERTERS; i++)
-    {
-        if(selected[i] == 1)
-        {
-            sendmessagetoinverter(i);
-        }
-    }
+    GtkTreeIter activeiter;
+
+    sprintf(debugbuffer,"cell edited - path: %s, new value: %s",path_string, newtext);
+    logwriteln(debugfilename,debugbuffer);
+
+    gtk_tree_model_get_iter_from_string(sigmodel,&activeiter,path_string);
+    gtk_list_store_set(sigmodel,&activeiter,COL_VALUE,strtod(newtext,NULL),-1);
 
 }
 
-int sendmessagetoinverter(int i)
+int sendoneoff(GtkWidget *widget, gpointer data)
 {
+    /*I'm thinking about adding support for sending messages to multiple
+    inverters at once, but for now, just call the function to send a message
+    to a single inverter*/
+
+    //first find out which inverter is selected
+    int index;
+    int retval;
+
+    index = getselectedactive();
+    retval = sendmessagetoinverter(index, chosenperm);
+
+    return retval;
+}
+
+int sendmessagetoinverter(int index, chosenmsg* compptr)
+{
+    int i;
+    unsigned char count;
+    int keepgoing = 1;
     int socket_desc;
     struct sockaddr_in server;
     char sendbuffer[1024];
     char recbuffer[1024];
+    chosenmsg *currentptr;
 
-    gpheader head;
+    unsigned short int magic;
+    unsigned char context;
+    unsigned char ncomps;
+    unsigned short int seqnum;
+    unsigned short typecode;
+    uint64_t val;
 
-    head.magic = GP_MAGIC;
-    head.context = INVERTER_CONTEXT;
-    head.seqnum = globalseqnum;
+    sprintf(debugbuffer,"sending messaage to inverter: %s",gtilist[index].name);
+    logwriteln(debugfilename,debugbuffer);
+
+    magic = htons(globalhead.magic);
+    context = globalhead.context;
+    seqnum = htons(globalhead.seqnum);
 
 
     //build message packet
+    memcpy(sendbuffer + MAGIC_OFFSET,&magic,2);
+    memcpy(sendbuffer + CONTEXT_OFFSET,&context,1);
+    memcpy(sendbuffer + SEQN_OFFSET,&seqnum,2);
+
+    currentptr = moveright(chosenperm);
+    while(keepgoing == 1)
+    {
+        if(currentptr->data == -1)
+        {
+            logwriteln(debugfilename,"exhausted message type list...");
+            keepgoing = 0;
+            break;
+        }
+        if(count > 10)
+        {
+            logwriteln(debugfilename, "problem: too many message types in list, truncating message");
+            keepgoing = 0;
+            break;
+        }
+        //fill out message component related fields
+        typecode = htons(currentptr->data);
+        memcpy(sendbuffer + TYPE_OFFSET + count*MULTICOMP_OFFSET,&typecode,2);
+        //memcpy(sendbuffer + VALUE_OFFSET + count*MULTICOMP_OFFSET,);
+        count++;
+        currentptr = moveright(chosenperm);
+
+
+    }
+    memcpy(sendbuffer + COMPN_OFFSET, &count,1);
+
+    //sendbuffer is ready to go out now
+
+
 
 
     socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
@@ -366,7 +446,7 @@ int sendmessagetoinverter(int i)
         logwriteln(debugfilename,"could not open socket");
     }
 
-    server.sin_addr.s_addr = inet_addr(gtilist[i].ipaddr);
+    server.sin_addr.s_addr = inet_addr(gtilist[index].ipaddr);
     server.sin_family = AF_INET;
     server.sin_port = htons(GP_PORT);
 
@@ -383,7 +463,7 @@ int choosesignalcallback(GtkWidget *widget, gpointer data)
 
 
     gtk_list_store_append(sigstore, &sigiter);
-    gtk_list_store_set(sigstore,&sigiter, COL_INDEX, index, COL_SIGNAME, signallist[index].name,-1);
+    gtk_list_store_set(sigstore,&sigiter, COL_INDEX, index, COL_SIGNAME, signallist[index].name, COL_VALUE, 0.0, -1);
     sigmodel = GTK_TREE_MODEL(sigstore);
     gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
 
@@ -655,4 +735,29 @@ int getindexfromip(char *ipaddr)
         }
     }
     return -1;
+}
+
+int getselectedactive(void)
+{
+
+    int index;
+    char *name;
+    char *ipaddr;
+    char *macaddr;
+
+    GtkTreeSelection *activesel;
+    GtkTreeRowReference *activeselref;
+    GtkTreePath *activeselpath;
+    GtkTreeIter activeseliter;
+    GtkTreeModel *activemodel;
+    GList *activesellist;
+     //find out which inverter, if any, has been selected
+    activesel = gtk_tree_view_get_selection(activetree);
+    activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
+    gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
+
+    //remove from gti structure list
+    index = getindexfromip(ipaddr);
+
+    return index;
 }

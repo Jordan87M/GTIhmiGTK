@@ -39,6 +39,22 @@ void traverseright(chosenmsg *start,void(*doforeach)(chosenmsg*))
         current = moveright(current);
         doforeach(current);
     }while(current != start);
+
+}
+
+int dlllength(chosenmsg *start)
+{
+    int count = 0;
+    chosenmsg *current = start;
+    do{
+        current = moveright(current);
+        if(current->data != -1)
+        {
+            count++;
+        }
+    }while(current != start);
+
+    return count;
 }
 
 void traverserightandremove(chosenmsg *start,void(*doforeach)(chosenmsg*),int remindex)

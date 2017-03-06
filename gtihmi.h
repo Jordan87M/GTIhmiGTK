@@ -43,6 +43,7 @@ void traverserightandremove(chosenmsg *start,void(*doforeach)(chosenmsg*),int re
 void debugprintnodeinfo(chosenmsg *node);
 void debugprintnodedata(chosenmsg *node);
 chosenmsg *createnewchosendllist(void);
+int dlllength(chosenmsg *start);
 
 
 

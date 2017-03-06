@@ -1,9 +1,19 @@
 #ifndef GPDEFS_H
 #define GPDEFS_H
 
-#define GP_PORT                         30000
+#define GP_PORT                         33000
 
 #define GP_MAGIC                        0xa3cf
+#define INITIAL_SEQNUM                  0x0001
+
+#define MAGIC_OFFSET                    0
+#define CONTEXT_OFFSET                  2
+#define COMPN_OFFSET                    3
+#define SEQN_OFFSET                     4
+#define TYPE_OFFSET                     6
+#define VALUE_OFFSET                    8
+//for packets with multiple type/value pairs
+#define MULTICOMP_OFFSET                10
 
 #define INVERTER_CONTEXT                0x01
 #define CAES_CONTEXT                    0x02
