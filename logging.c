@@ -1,12 +1,14 @@
 #include <time.h>
 
 #include "logconf.h"
+#include "gtihmi.h"
 
 
 int logwriteln(char *filename, const char *line)
 {
     FILE *fp;
     fp = fopen(filename,"a");
+    int retval;
 
     time_t now;
     struct tm *timeinfo;
@@ -16,8 +18,27 @@ int logwriteln(char *filename, const char *line)
     snprintf(timebuff, 64, "%s",asctime(timeinfo));
     replaceandclean(timebuff,' ','_');
 
-    fprintf(fp, "\n%s: %s",timebuff, line);
+    retval = fprintf(fp, "\n%s: %s",timebuff, line);
     fclose(fp);
+
+    return retval;
+}
+
+
+int logprintfstring(char *format, char *string)
+{
+    int retval;
+    snprintf(debugbuffer,1024,format,string);
+    retval = logwriteln(debugfilename,debugbuffer);
+    return retval;
+}
+
+int logprintfint(char *format, int data)
+{
+    int retval;
+    snprintf(debugbuffer,1024,format,data);
+    retval = logwriteln(debugfilename,debugbuffer);
+    return retval;
 }
 
 int replaceandclean(char *strptr, char from, char to)
@@ -49,4 +70,18 @@ int replace(char *strptr, char from, char to)
         }
     }
     return 0;
+}
+
+int debugprinthex(unsigned char *hexstring, int numbytes)
+{
+    int i;
+    char outbuffer[512];
+    sprintf(debugbuffer, "sendbuffer as hex string: ");
+    for(i = 0; i < numbytes; i++)
+    {
+        sprintf(outbuffer, "%#04x ", hexstring[i]);
+        strcat(debugbuffer,outbuffer);
+        //logwriteln(debugfilename,debugbuffer);
+    }
+    logwriteln(debugfilename,debugbuffer);
 }

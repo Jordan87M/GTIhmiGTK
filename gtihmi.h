@@ -11,6 +11,7 @@
 
 typedef struct chosenmsg_t{
     int data;
+    double value;
     void *llink;
     void *rlink;
 } chosenmsg;
@@ -22,7 +23,9 @@ typedef struct GTIinfo_t{
     int oneoffenable;
     int schedenable;
     int extant;
+    short int lastseqnum;
     chosenmsg *msgtypelistperm;
+    chosenmsg *reclistperm;
 
 } GTIinfo;
 
@@ -34,8 +37,12 @@ extern char datafilename[64];
 #include <math.h>
 
 #include "gtihmi.h"
+#include "logconf.h"
 
-chosenmsg *insertchosenmsg(chosenmsg *entry1, int newdata);
+extern char debugbuffer[LOG_BUFFER_SIZE];
+
+
+chosenmsg *insertchosenmsg(chosenmsg *entry1, int newdata, double newvalue);
 int removechosenmsg(chosenmsg *entry);
 chosenmsg *moveright(chosenmsg *start);
 void traverseright(chosenmsg *start,void(*doforeach)(chosenmsg*));
@@ -44,8 +51,9 @@ void debugprintnodeinfo(chosenmsg *node);
 void debugprintnodedata(chosenmsg *node);
 chosenmsg *createnewchosendllist(void);
 int dlllength(chosenmsg *start);
-
-
+chosenmsg *findbydata(chosenmsg *start, int searchfor);
+chosenmsg *setvalue(chosenmsg *start, int searchfor, double newvalue);
+void flipbytes(void *ptr, int length);
 
 
 #endif

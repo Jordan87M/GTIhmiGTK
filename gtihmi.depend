@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1488755041 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
+1488928931 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
 	<stdlib.h>
 	<stdio.h>
 	<gtk.h>
 	<sys/socket.h>
 	<arpa/inet.h>
+	<sys/time.h>
 	"gpdefs.h"
 	"gtihmi.h"
 	"logconf.h"
@@ -18,10 +19,11 @@
 
 1488754553 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gpdefs.h
 
-1488751742 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gtihmi.h
+1488914631 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gtihmi.h
 	<gtk.h>
 	<math.h>
 	"gtihmi.h"
+	"logconf.h"
 
 1487853693 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gtihmiwin.h
 	<gtk.h>
@@ -2647,14 +2649,19 @@
 1414287005 /usr/include/gtk-3.0/gtk/deprecated/gtkvseparator.h
 	<gtk/gtkseparator.h>
 
-1488539622 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logconf.h
+1488863387 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logconf.h
 	<stdio.h>
-
-1488538506 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logging.c
 	<time.h>
 	"logconf.h"
 
-1488755061 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/utils.c
+1488859229 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logging.c
+	<time.h>
+	"logconf.h"
+	"gtihmi.h"
+
+1488916809 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/utils.c
 	<math.h>
 	"gtihmi.h"
+	"gpdefs.h"
+	"logconf.h"
 

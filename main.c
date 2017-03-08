@@ -3,6 +3,7 @@
 #include <gtk.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/time.h>
 
 #include "gpdefs.h"
 #include "gtihmi.h"
@@ -21,6 +22,11 @@ GtkTreeIter sigiter;
 GtkCellRenderer *sigrenderer;
 GtkTreeModel *sigmodel;
 
+GtkListStore *recstore;
+GtkTreeIter reciter;
+GtkCellRenderer *recrenderer;
+GtkTreeModel *recmodel;
+
 GtkWidget *window;
 GtkWidget *fixed;
 
@@ -38,6 +44,8 @@ GtkWidget *createbutton;
 GtkWidget *removebutton;
 GtkWidget *activetree;
 GtkWidget *sendbutton;
+GtkWidget *recscroll;
+GtkWidget *rectreeview;
 
 GtkWidget *newnameentry;
 GtkWidget *newnamelabel;
@@ -77,7 +85,6 @@ int socket_desc;
 GTIinfo gtilist[MAX_N_INVERTERS];
 int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
-unsigned short int globalseqnum;
 chosenmsg *chosenperm;
 gpheader globalhead = {.magic = GP_MAGIC,
                         .seqnum = INITIAL_SEQNUM,
@@ -100,6 +107,12 @@ enum
     COL_VALUE
 };
 
+enum
+{
+    COL_RECNAME = 0,
+    COL_RECCODE,
+    COL_RECVALUE,
+};
 
 static void activate(GtkApplication *app, gpointer user_data);
 int choosesignalcallback(GtkWidget *widget, gpointer data);
@@ -128,8 +141,9 @@ int main(int argc, char *argv[])
     //print signal list for debugging
     printfullsignallist(debugfilename);
 
-    //initialize structure
+    //initialize structure for message components to be sent
     chosenperm = createnewchosendllist();
+
     //debugprintnodedata(chosenperm);
 
     app = gtk_application_new("sevelevlabs.gti.hmi",G_APPLICATION_FLAGS_NONE);
@@ -179,7 +193,11 @@ static void activate(GtkApplication* app, gpointer user_data)
     int remove_but_xpos = horz_dim - std_but_width - horz_marg;
     int remove_but_ypos = active_view_ypos - std_but_height - 20;
     int send_but_xpos = chosen_box_xpos + sigview_width + sigbox_space;
-    int send_but_ypos = chosen_top_ypos;
+    int send_but_ypos = remove_but_ypos;
+    int recscroll_ypos = sig_row_y;
+    int recscroll_xpos = send_but_xpos;
+    int recscroll_width = horz_dim - horz_marg - recscroll_xpos;
+    int recscroll_height = 180;
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "GTI interface");
@@ -196,6 +214,10 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_fixed_put(GTK_FIXED(fixed),chosenscroll,chosen_box_xpos, sig_row_y);
     gtk_widget_set_size_request(chosenscroll,sigview_width,sigview_height);
 
+    recscroll = gtk_scrolled_window_new(NULL,NULL);
+    gtk_fixed_put(GTK_FIXED(fixed),recscroll,recscroll_xpos,recscroll_ypos);
+    gtk_widget_set_size_request(recscroll,recscroll_width,recscroll_height);
+
     signallistbox = gtk_list_box_new();
     gtk_container_add(GTK_CONTAINER(signalscroll),signallistbox);
 
@@ -208,6 +230,9 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     chosensignaltreeview = gtk_tree_view_new();
     gtk_container_add(GTK_CONTAINER(chosenscroll),chosensignaltreeview);
+
+    rectreeview = gtk_tree_view_new();
+    gtk_container_add(GTK_CONTAINER(recscroll),rectreeview);
 
     choosesignalbutton = gtk_button_new_with_label(">>");
     gtk_fixed_put(GTK_FIXED(fixed),choosesignalbutton,chosen_but_xpos,chosen_top_ypos);
@@ -344,6 +369,13 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
 
+    recstore = gtk_list_store_new(3,G_TYPE_STRING,G_TYPE_STRING,G_TYPE_DOUBLE);
+    recrenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECNAME,"Name",recrenderer,"text",0);
+    recrenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECCODE,"Type",recrenderer,"text",1);
+    recrenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECVALUE,"Value",recrenderer,"text",2);
 
     gtk_widget_show_all(window);
 
@@ -352,13 +384,24 @@ static void activate(GtkApplication* app, gpointer user_data)
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data)
 {
     GtkTreeIter activeiter;
+    chosenmsg *chosenptr;
+    int index;
+    double newval;
 
+    newval = strtod(newtext,NULL);
     sprintf(debugbuffer,"cell edited - path: %s, new value: %s",path_string, newtext);
     logwriteln(debugfilename,debugbuffer);
 
     gtk_tree_model_get_iter_from_string(sigmodel,&activeiter,path_string);
-    gtk_list_store_set(sigmodel,&activeiter,COL_VALUE,strtod(newtext,NULL),-1);
+    gtk_list_store_set(sigmodel,&activeiter,COL_VALUE,newval,-1);
+    sigmodel = GTK_TREE_MODEL(sigstore);
+    gtk_tree_model_get(sigmodel,&activeiter,COL_INDEX,&index,-1);
 
+    logwriteln(debugfilename,"updating message component struct value");
+
+    chosenptr = setvalue(chosenperm,index,newval);
+    debugprintnodeinfo(chosenptr);
+    return;
 }
 
 int sendoneoff(GtkWidget *widget, gpointer data)
@@ -372,7 +415,14 @@ int sendoneoff(GtkWidget *widget, gpointer data)
     int retval;
 
     index = getselectedactive();
+    if(index < 0)
+    {
+        logwriteln(debugfilename,"no inverter has been selected to receive the message");
+        return -1;
+    }
     retval = sendmessagetoinverter(index, chosenperm);
+
+    updaterectreeview();
 
     return retval;
 }
@@ -380,22 +430,26 @@ int sendoneoff(GtkWidget *widget, gpointer data)
 int sendmessagetoinverter(int index, chosenmsg* compptr)
 {
     int i;
-    unsigned char count;
+    unsigned char count = 0;
     int keepgoing = 1;
     int socket_desc;
     struct sockaddr_in server;
     char sendbuffer[1024];
     char recbuffer[1024];
     chosenmsg *currentptr;
+    int payloadsize;
+    int datapresent;
 
     unsigned short int magic;
     unsigned char context;
     unsigned char ncomps;
     unsigned short int seqnum;
     unsigned short typecode;
-    uint64_t val;
+    double val;
 
-    sprintf(debugbuffer,"sending messaage to inverter: %s",gtilist[index].name);
+
+
+    sprintf(debugbuffer,"preparing to send messaage to inverter: %s",gtilist[index].name);
     logwriteln(debugfilename,debugbuffer);
 
     magic = htons(globalhead.magic);
@@ -408,9 +462,12 @@ int sendmessagetoinverter(int index, chosenmsg* compptr)
     memcpy(sendbuffer + CONTEXT_OFFSET,&context,1);
     memcpy(sendbuffer + SEQN_OFFSET,&seqnum,2);
 
+    payloadsize = 6;
+
     currentptr = moveright(chosenperm);
     while(keepgoing == 1)
     {
+        debugprintnodeinfo(currentptr);
         if(currentptr->data == -1)
         {
             logwriteln(debugfilename,"exhausted message type list...");
@@ -424,32 +481,134 @@ int sendmessagetoinverter(int index, chosenmsg* compptr)
             break;
         }
         //fill out message component related fields
-        typecode = htons(currentptr->data);
+        typecode = htons(signallist[currentptr->data].code);
         memcpy(sendbuffer + TYPE_OFFSET + count*MULTICOMP_OFFSET,&typecode,2);
-        //memcpy(sendbuffer + VALUE_OFFSET + count*MULTICOMP_OFFSET,);
+
+        memcpy(&val,&(currentptr->value),8);
+        flipbytes(&val,sizeof(val));
+
+        //val = htobe64(val);
+        //flipbytes(&val,8);
+        memcpy(sendbuffer + VALUE_OFFSET + count*MULTICOMP_OFFSET,&val,8);
         count++;
-        currentptr = moveright(chosenperm);
-
-
+        currentptr = moveright(currentptr);
+        payloadsize += 10;
     }
+    //now that all message components have been added, fill in the number of components in the header
     memcpy(sendbuffer + COMPN_OFFSET, &count,1);
 
-    //sendbuffer is ready to go out now
-
-
+    //print message in buffer as hex bytestream
+    debugprinthex(sendbuffer,payloadsize);
 
 
     socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
+    struct timeval tv;
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
     if(socket_desc == -1)
     {
-        printf("could not create socket");
         logwriteln(debugfilename,"could not open socket");
     }
 
     server.sin_addr.s_addr = inet_addr(gtilist[index].ipaddr);
     server.sin_family = AF_INET;
     server.sin_port = htons(GP_PORT);
+    server.sin_addr.s_addr = inet_addr(gtilist[index].ipaddr);
 
+    if( sendto(socket_desc, sendbuffer, payloadsize,0,(struct sockaddr *)&server,sizeof(server)) == -1)
+    {
+        logwriteln(debugfilename,"send() failed!");
+        return -1;
+    }
+
+    memset(recbuffer,0, 1024);
+    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&server,sizeof(server));
+
+    if(datapresent == -1)
+    {
+        logwriteln(debugfilename,"failed to receive data!");
+    }
+    sprintf(debugbuffer,"received %d bytes of data. here is the payload bytestream: ", datapresent);
+    logwriteln(debugfilename,debugbuffer);
+    logwriteln(debugfilename,recbuffer);
+
+    disassemblepacket(recbuffer,index);
+
+    gtilist[index].lastseqnum = seqnum;
+    globalhead.seqnum++;
+}
+
+int disassemblepacket(unsigned char *buffer, int index)
+{
+    unsigned short int magic;
+    unsigned char ncomps;
+    unsigned char context;
+    unsigned short int seqnum;
+
+    unsigned short int responsetype;
+    double responsevalue;
+    int responsetypeindex;
+
+    int i;
+
+    memcpy(&magic,buffer+ MAGIC_OFFSET,2);
+    magic = ntohs(magic);
+
+    memcpy(&ncomps,buffer + COMPN_OFFSET,1);
+    memcpy(&context,buffer + CONTEXT_OFFSET,1);
+
+    memcpy(&seqnum,buffer + SEQN_OFFSET,2);
+
+    //clear old received message components
+    clearlist(gtilist[index].reclistperm);
+    for(i = 0; i < ncomps; i++)
+    {
+        memcpy(&responsetype,buffer + TYPE_OFFSET + i*MULTICOMP_OFFSET,2);
+        memcpy(&responsevalue,buffer + VALUE_OFFSET + i*MULTICOMP_OFFSET,8);
+
+        responsetype = ntohs(responsetype);
+        flipbytes(&responsevalue,8);
+
+
+        responsetypeindex = lookupbycode(responsetype);
+        insertchosenmsg(gtilist[index].reclistperm,responsetypeindex,responsevalue);
+
+    }
+
+    return 0;
+}
+
+int updaterectreeview(void)
+{
+    int i;
+
+    //first clear old treeview
+
+
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+            chosenmsg *current = gtilist[i].reclistperm;
+            do{
+                current = moveright(current);
+                if(current->data != -1)
+                {
+                    gtk_list_store_append(recstore,&reciter);
+                    gtk_list_store_set(recstore,&reciter,COL_RECNAME, gtilist[i].name, COL_RECCODE, signallist[current->data].name, COL_RECVALUE, current->value, -1);
+                    recmodel = GTK_TREE_MODEL(recstore);
+                    gtk_tree_view_set_model(GTK_TREE_VIEW(rectreeview),recmodel);
+
+                    gtk_widget_show_all(rectreeview);
+                }
+            }while(current != gtilist[i].reclistperm);
+        }
+    }
+
+    //
+
+    return 0;
 }
 
 int choosesignalcallback(GtkWidget *widget, gpointer data)
@@ -475,7 +634,7 @@ int choosesignalcallback(GtkWidget *widget, gpointer data)
     gtk_widget_show_all(window);
 
     //add to list of chosen messages
-    insertchosenmsg(chosenperm,index);
+    insertchosenmsg(chosenperm,index,0);
     logwriteln(debugfilename,"here's our list of message types now:");
     traverseright(chosenperm,debugprintnodedata);
 
@@ -494,7 +653,7 @@ int unchoosesignalcallback(GtkWidget *widget, gpointer data)
     GtkTreeModel *activemodel;
     GList *activesellist;
 
-    int *index;
+    int index;
     char *signame;
 
     //find out which inverter, if any, has been selected
@@ -589,7 +748,6 @@ int addnewinverter(GtkWidget *widget, gpointer data)
 
         if(approval == 1)
         {
-
             snprintf(debugbuffer,256,"attempting to create static arp cache entry for inverter %s (%s), at %s", name, macaddr, ipaddr);
             logwriteln(debugfilename,debugbuffer);
             //form command to add inverter as static arp entry
@@ -608,6 +766,9 @@ int addnewinverter(GtkWidget *widget, gpointer data)
             strcpy(gtilist[inverterinsertindex].ipaddr,ipaddr);
             strcpy(gtilist[inverterinsertindex].macaddr,macaddr);
             gtilist[inverterinsertindex].extant = 1;
+
+            //initialize recieved message list pointer
+            gtilist[inverterinsertindex].reclistperm = createnewchosendllist();
 
             sprintf(debugbuffer,"added inverter %s (%s) at %s in index %d",name,macaddr,ipaddr,inverterinsertindex);
             logwriteln(debugfilename,debugbuffer);
@@ -688,6 +849,9 @@ int removeinverter(GtkWidget *widget, gpointer data)
     logwriteln(debugfilename,debugbuffer);
 
     gtk_list_store_remove(store, &activeseliter);
+
+    //free memory devoted to received message list
+    clearlist(gtilist[removeindex].reclistperm);
 
     //remove from gti structure list
     removeindex = getindexfromip(ipaddr);
