@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formatv>0.1</formatv>
+<config>
+    <inverters>
+        <inverter>
+            <name>Olerud</name>
+            <ipaddr>192.168.0.153</ipaddr>
+            <macaddr>30:85:a9:2c:23:18</macaddr>
+        </inverter>
+    </inverters>
+    <msgs>
+        <cmp>
+            <index>5</index>
+            <value>1.57</value>
+        </cmp>
+        <cmp>
+            <index
+    </msgs>
+</config>

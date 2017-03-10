@@ -30,6 +30,13 @@ GtkTreeModel *recmodel;
 GtkWidget *window;
 GtkWidget *fixed;
 
+GtkWidget *menubar;
+GtkWidget *filedrop;
+GtkWidget *filemenubutton;
+GtkWidget *filemenuvbox;
+GtkWidget *fromfile;
+GtkWidget *tofile;
+
 GtkWidget *signallistbox;
 GtkWidget *signalscroll;
 GtkWidget *chosensignaltreeview;
@@ -122,6 +129,8 @@ int removeinverter(GtkWidget *wdiget, gpointer data);
 int getindexfromip(char* ipaddr);
 int sendoneoff(GtkWidget *widget, gpointer data);
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data);
+int saveconfigtofile(void);
+int loadconfigfromfile(void);
 
 int main(int argc, char *argv[])
 {
@@ -165,9 +174,9 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     //variables to help coordinate widget positioning
     int horz_marg = 20;
-    int top_marg = 5;
+    int top_marg = 25;
     int horz_dim = 900;
-    int vert_dim = 600;
+    int vert_dim = 620;
     int frame_width = horz_dim-2*horz_marg;
     int frame_height = 60;
     int sigbox_width = 180;
@@ -205,6 +214,25 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     fixed = gtk_fixed_new();
     gtk_container_add(GTK_CONTAINER(window), fixed);
+
+    filemenuvbox = gtk_vbox_new(FALSE,0);
+    gtk_container_add(GTK_CONTAINER(fixed),filemenuvbox);
+
+    menubar = gtk_menu_bar_new();
+    filedrop = gtk_menu_new();
+    filemenubutton = gtk_menu_item_new_with_label("File");
+    fromfile = gtk_menu_item_new_with_label("Load");
+    tofile = gtk_menu_item_new_with_label("Save");
+
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(filemenubutton),filedrop);
+    gtk_menu_shell_append(GTK_MENU_SHELL(filedrop),tofile);
+    gtk_menu_shell_append(GTK_MENU_SHELL(filedrop),fromfile);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menubar),filemenubutton);
+    gtk_box_pack_start(GTK_BOX(filemenuvbox),menubar,FALSE,FALSE, 0);
+
+    g_signal_connect(G_OBJECT(tofile),"activate",G_CALLBACK(saveconfigtofile), NULL);
+    g_signal_connect(G_OBJECT(fromfile),"activate",G_CALLBACK(loadconfigfromfile),NULL);
+
 
     signalscroll = gtk_scrolled_window_new(NULL,NULL);
     gtk_fixed_put(GTK_FIXED(fixed),signalscroll, horz_marg, sig_row_y);
@@ -584,6 +612,7 @@ int updaterectreeview(void)
     int i;
 
     //first clear old treeview
+    gtk_list_store_clear(recstore);
 
 
     for(i = 0; i < MAX_N_INVERTERS; i++)
@@ -656,7 +685,7 @@ int unchoosesignalcallback(GtkWidget *widget, gpointer data)
     int index;
     char *signame;
 
-    //find out which inverter, if any, has been selected
+    //find out which signal, if any, has been selected
     activesel = gtk_tree_view_get_selection(chosensignaltreeview);
     activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
     gtk_tree_model_get(activemodel,&activeseliter,COL_INDEX,&index,COL_SIGNAME,&signame,-1);
@@ -924,4 +953,17 @@ int getselectedactive(void)
     index = getindexfromip(ipaddr);
 
     return index;
+}
+
+int saveconfigtofile(void)
+{
+    logwriteln(debugfilename,"saving current configuration to file...");
+    saveinverterconfig(&gtilist);
+    return 0;
+}
+
+int loadconfigfromfile(void)
+{
+    logwriteln(debugfilename,"loading configuration from file...");
+    return 0;
 }

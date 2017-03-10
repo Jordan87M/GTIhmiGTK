@@ -69,20 +69,11 @@
 		<Linker>
 			<Add option="`pkg-config gtk+-2.0 --libs`" />
 		</Linker>
-		<Unit filename="builder.ui" />
 		<Unit filename="gpdefs.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="gpdefs.h" />
-		<Unit filename="gtihmi.gresource.xml" />
 		<Unit filename="gtihmi.h" />
-		<Unit filename="gtihmiapp.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="gtihmiappwin.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="gtihmiwin.h" />
 		<Unit filename="logconf.h" />
 		<Unit filename="logging.c">
 			<Option compilerVar="CC" />
@@ -91,6 +82,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="resources.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

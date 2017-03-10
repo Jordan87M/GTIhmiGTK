@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1488928931 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
+1489137880 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
 	<stdlib.h>
 	<stdio.h>
 	<gtk.h>
@@ -2663,5 +2663,15 @@
 	<math.h>
 	"gtihmi.h"
 	"gpdefs.h"
+	"logconf.h"
+
+1489137976 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/xmllib.c
+	"xmllib.h"
+	"gtihmi.h"
+	"logconf.h"
+
+1489138032 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/xmllib.h
+	"xmllib.h"
+	"gtihmi.h"
 	"logconf.h"
 
