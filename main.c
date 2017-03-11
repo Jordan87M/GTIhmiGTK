@@ -958,7 +958,7 @@ int getselectedactive(void)
 int saveconfigtofile(void)
 {
     logwriteln(debugfilename,"saving current configuration to file...");
-    saveinverterconfig(&gtilist);
+    saveinverterconfig(&gtilist,chosenperm);
     return 0;
 }
 
