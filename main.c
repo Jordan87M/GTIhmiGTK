@@ -965,5 +965,6 @@ int saveconfigtofile(void)
 int loadconfigfromfile(void)
 {
     logwriteln(debugfilename,"loading configuration from file...");
+    loadinverterconfig("tempname.config");
     return 0;
 }

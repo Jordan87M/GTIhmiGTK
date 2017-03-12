@@ -9,9 +9,17 @@
 #include "gtihmi.h"
 #include "logconf.h"
 
-#define NOT_YET_VALIDATED           -1
-#define REACHED_EOF_UNEXPECTEDLY    -2
-#define UNEXPECTED_ATTRIBUTE        -3
+#define NOT_YET_VALIDATED           -101
+#define REACHED_EOF_UNEXPECTEDLY    -201
+#define UNEXPECTED_ATTRIBUTE        -301
+#define NOT_XML_LINE                -401
+#define SHOULD_HAVE_QUIT            -501
+#define MISPLACED_ITEM              -601
+#define MISSING_SECTION             -701
+
+
+
+#define PARSEDEBUGFILENAME          "parse.log"
 
 
 
