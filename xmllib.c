@@ -10,6 +10,7 @@ int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm)
     int i;
     FILE *fp;
 
+
     fp = fopen("tempname.config","w");
     fprintf(fp,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     fprintf(fp,"\n<format>%d.%d</format>",formatvmajor,formatvminor);
@@ -48,7 +49,7 @@ int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm)
 int writeinverterconfig(FILE *fp,char *name,char *ipaddr,char *macaddr)
 {
     int retval;
-    retval = fprintf(fp,"\n        <inverter>\n            <name>%s</name>\n            <ipaddr>%s</ipaddr>\n            <macaddr>%s</macaddr>\n        </inverter>",name,ipaddr,macaddr);
+    retval = fprintf(fp,"\n        <inverter>\n            <name>%s </name>\n            <ipaddr>%s</ipaddr>\n            <macaddr>%s</macaddr>\n        </inverter>",name,ipaddr,macaddr);
     return retval;
 }
 
@@ -64,7 +65,7 @@ int writemessageconfigs(FILE *fp, chosenmsg *chosenperm)
     }while(current != chosenperm);
 }
 
-int loadinverterconfig(char *filename)
+configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
 {
     FILE *fp;
     FILE *fpdebug;
@@ -77,6 +78,23 @@ int loadinverterconfig(char *filename)
     char parsedebugfilename[] = "parse.log";
     char parsedebugbuffer[256];
     int retval;
+    int i;
+
+
+    configstore loadedconfig;
+
+    //initialize counter for new inverters
+    loadedconfig.invcreateindex = 0;
+    loadedconfig.loadedmsgs = createnewchosendllist();
+
+    //before proceeding, clear current conifguration, if any
+    //first remove inverters
+    for(i = 0; i< MAX_N_INVERTERS; i++)
+    {
+        removeinverterfromgtilist(i);
+    }
+    //now remove message components
+    clearlist(chosenperm);
 
     //state tracking variables
     status.xmlverified = 0;
@@ -115,7 +133,7 @@ int loadinverterconfig(char *filename)
         fgets(linebuffer,256,fp);
         status.lineno++;
 
-        retval = processline(linebuffer, &status, fpdebug);
+        retval = processline(linebuffer, &status, &loadedconfig, fpdebug);
 
         position = ftell(fp);
 
@@ -127,9 +145,10 @@ int loadinverterconfig(char *filename)
 
     }
 
+    return &loadedconfig;
 }
 
-int processline(const char *line, readstatus *status, FILE *fpdebug)
+int processline(const char *line, readstatus *status, configstore *loadedconfig, FILE *fpdebug)
 {
     int len = strlen(line);
     int i;
@@ -138,6 +157,7 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
     int xmlquestionpresent = 0;
     char *retval = 0;
     char parsedebugbuffer[256];
+    char retstring[256];
 
     //printf("status : %d", status->lineno);
     //fprintf(fpdebug,"line: %s",line);
@@ -267,21 +287,28 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
                 retval = strstr(line,"<name>");
                 if(retval != NULL)
                 {
-                    fprintf(fpdebug,"\ninverter name attribute at line %d",status->lineno);
+                    readstringbetweentags(line,"name",retstring);
+                    logwriteln(debugfilename,retstring);
+                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].name,retstring);
+                    fprintf(fpdebug,"\ninverter name attribute at line %d : %s",status->lineno, loadedconfig->loadedgtilist[loadedconfig->invcreateindex].name);
                     return 0;
                 }
 
                 retval = strstr(line,"<ipaddr>");
                 if(retval != NULL)
                 {
-                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d",status->lineno);
+                    readstringbetweentags(line,"ipaddr",retstring);
+                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].ipaddr,retstring);
+                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d : %s",status->lineno,loadedconfig->loadedgtilist[loadedconfig->invcreateindex].ipaddr);
                     return 0;
                 }
 
                 retval = strstr(line,"<macaddr>");
                 if(retval != NULL)
                 {
-                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d",status->lineno);
+                    readstringbetweentags(line,"macaddr",retstring);
+                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].macaddr, retstring);
+                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d : %s",status->lineno, loadedconfig->loadedgtilist[loadedconfig->invcreateindex].macaddr);
                     return 0;
                 }
 
@@ -290,6 +317,9 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
                 {
                     fprintf(fpdebug,"\nclosing an inverter");
                     status->readinganinverter = 0;
+                    loadedconfig->loadedgtilist[loadedconfig->invcreateindex].extant = 1;
+                    //increment counter for loaded inverters
+                    loadedconfig->invcreateindex++;
                     return 0;
                 }
 
@@ -326,16 +356,16 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
                 retval = strstr(line,"<index>");
                 if(retval != NULL)
                 {
-                    readintbetweentags(line,"index");
-                    fprintf(fpdebug,"\nreading component index at line %d",status->lineno);
+                    loadedconfig->currentmsgptr->data = readintbetweentags(line,"index");
+                    fprintf(fpdebug,"\nreading component index at line %d : %d",status->lineno, loadedconfig->currentmsgptr->data);
                     return 0;
                 }
 
                 retval = strstr(line,"<value>");
                 if(retval != NULL)
                 {
-                    readdoublebetweentags(line,"value");
-                    fprintf(fpdebug,"\nreading component value at line %d",status->lineno);
+                    loadedconfig->currentmsgptr->value = readdoublebetweentags(line,"value");
+                    fprintf(fpdebug,"\nreading component value at line %d : %f",status->lineno, loadedconfig->currentmsgptr->value);
                     return 0;
                 }
 
@@ -358,6 +388,7 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
                 if(retval != NULL)
                 {
                     status->readingamessagecomp = 1;
+                    loadedconfig->currentmsgptr = insertchosenmsg(loadedconfig->loadedmsgs,0,0);
                     fprintf(fpdebug,"\nopening a new message");
                     return 0;
                 }
@@ -409,38 +440,79 @@ int processline(const char *line, readstatus *status, FILE *fpdebug)
     }
 }
 
-int readintbetweentags(char *line, const char *tag)
+int readintbetweentags(char *line, char *tag)
 {
     char format[128];
-    const char *type = "%d";
+    char clean[128];
+    const char type[] = "%d";
     int retval;
 
     sprintf(format,"<%s>%s</%s>",tag,type,tag);
 
-    sscanf(line,format,retval);
+    stripleadingspaces(line,clean);
+    sscanf(clean,format,&retval);
+    sprintf(debugbuffer,"%d",retval);
+    logwriteln(debugfilename,debugbuffer);
     return retval;
 }
 
-double readdoublebetweentags(char *line, const char *tag)
+double readdoublebetweentags(char *line, char *tag)
 {
     char format[128];
-    const char *type = "%f";
-    int retval;
+    char clean[128];
+    const char type[] = "%lf";
+    double retval;
 
-    sprintf(format,"<%s>%s</%s>",tag,type,tag);
 
-    sscanf(line,format,retval);
+    logwriteln(debugfilename,line);
+    logwriteln(debugfilename,tag);
+    sprintf(format,"<%s>%s</%s>\n",tag,type,tag);
+    logwriteln(debugfilename,format);
+    stripleadingspaces(line,clean);
+
+    sprintf(debugbuffer,"%s",clean);
+    logwriteln(debugfilename,debugbuffer);
+
+    sscanf(clean,format,&retval);
+    sprintf(debugbuffer,"double returned %lf",retval);
+    logwriteln(debugfilename,debugbuffer);
     return retval;
 }
 
-char *readstringbetweentags(char *line, const char *tag)
+void readstringbetweentags(char *line, char *tag, char *retstring)
 {
     char format[128];
-    const char *type = "%s";
-    char *retval;
+    char clean[128];
+    const char type[] = "%s";
+    char retval[128];
 
     sprintf(format,"<%s>%s</%s>",tag,type,tag);
+    stripleadingspaces(line,clean);
 
-    sscanf(line,format,retval);
-    return retval;
+    sscanf(clean,format,retstring);
+    sprintf(debugbuffer," returned string: %s",retstring);
+    logwriteln(debugfilename,debugbuffer);
+}
+
+void stripleadingspaces(char *line, char *clean)
+{
+    int i = 0;
+    int j = 0;
+    int shouldcopy = 0;
+
+    sprintf(debugbuffer,"length of input: %d", strlen(line));
+    logwriteln(debugfilename,debugbuffer);
+
+
+    for(i = 0; i<strlen(line); i++)
+    {
+        if(*(line + i) != ' ')
+        {
+            strcpy(clean,line + i);
+            logwriteln(debugfilename,clean);
+            return;
+        }
+
+    }
+
 }

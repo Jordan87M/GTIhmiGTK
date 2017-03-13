@@ -43,11 +43,12 @@ typedef struct readstatus_t{
 int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm);
 int writeinverterconfig(FILE *fp,char *name,char *ipaddr,char *macaddr);
 int writemessageconfigs(FILE *fp, chosenmsg *chosenperm);
-int loadinverterconfig(char *filename);
-int processline(const char *line, readstatus *status, FILE *fpdebug);
-int readintbetweentags(char *line, const char *tag);
-double readdoublebetweentags(char *line, const char *tag);
-char *readstringbetweentags(char *line, const char *tag);
+configstore *loadinverterconfig(char *filename,chosenmsg *chosenperm);
+int processline(const char *line, readstatus *status, configstore *loadedconfig, FILE *fpdebug);
+int readintbetweentags(char *line, char *tag);
+double readdoublebetweentags(char *line, char *tag);
+void readstringbetweentags(char *line, char *tag, char *retstring);
+void stripleadingspaces(char *line, char *clean);
 
 
 

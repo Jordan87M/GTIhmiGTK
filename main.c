@@ -138,6 +138,7 @@ int main(int argc, char *argv[])
 
     //gui dimensional variables
     int retval;
+    int i;
 
 
     sprintf(debugfilename,"debuglog");
@@ -152,6 +153,11 @@ int main(int argc, char *argv[])
 
     //initialize structure for message components to be sent
     chosenperm = createnewchosendllist();
+    debugprintnodeinfo(chosenperm);
+    for(i = 0; i< MAX_N_INVERTERS; i++)
+    {
+        gtilist[i].msgtypelistperm = createnewchosendllist();
+    }
 
     //debugprintnodedata(chosenperm);
 
@@ -565,6 +571,8 @@ int sendmessagetoinverter(int index, chosenmsg* compptr)
 
     gtilist[index].lastseqnum = seqnum;
     globalhead.seqnum++;
+
+    return 0;
 }
 
 int disassemblepacket(unsigned char *buffer, int index)
@@ -964,7 +972,44 @@ int saveconfigtofile(void)
 
 int loadconfigfromfile(void)
 {
+    int i;
+    configstore *conf;
     logwriteln(debugfilename,"loading configuration from file...");
-    loadinverterconfig("tempname.config");
+    sprintf(debugbuffer,"node ptr: %d", (int) chosenperm);
+    logwriteln(debugfilename,debugbuffer);
+    conf = loadinverterconfig("tempname.config",chosenperm);
+
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(conf->loadedgtilist[i].extant == 1)
+        {
+            gtilist[i].extant = 1;
+            strcpy(gtilist[i].name, conf->loadedgtilist[i].name);
+            strcpy(gtilist[i].ipaddr, conf->loadedgtilist[i].ipaddr);
+            strcpy(gtilist[i].macaddr, conf->loadedgtilist[i].macaddr);
+            //this will have to be changed to match the loaded version
+            gtilist[i].msgtypelistperm = createnewchosendllist();
+        }
+
+    }
+
+    chosenperm = conf->loadedmsgs;
+
+
+
+    return 0;
+}
+
+int removeinverterfromgtilist(int index)
+{
+    //free heap memory from message type list
+    sprintf(debugbuffer,"listpointer: %d",(int) (gtilist[index].msgtypelistperm));
+    if(gtilist[index].msgtypelistperm != NULL)
+    {
+        clearlist(gtilist[index].msgtypelistperm);
+    }
+
+    //deactivate inverter index
+    gtilist[index].extant = 0;
     return 0;
 }
