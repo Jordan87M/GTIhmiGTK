@@ -977,25 +977,13 @@ int loadconfigfromfile(void)
     logwriteln(debugfilename,"loading configuration from file...");
     sprintf(debugbuffer,"node ptr: %d", (int) chosenperm);
     logwriteln(debugfilename,debugbuffer);
-    conf = loadinverterconfig("tempname.config",chosenperm);
+    loadinverterconfig("tempname.config",chosenperm, &gtilist);
 
-    for(i = 0; i < MAX_N_INVERTERS; i++)
-    {
-        if(conf->loadedgtilist[i].extant == 1)
-        {
-            gtilist[i].extant = 1;
-            strcpy(gtilist[i].name, conf->loadedgtilist[i].name);
-            strcpy(gtilist[i].ipaddr, conf->loadedgtilist[i].ipaddr);
-            strcpy(gtilist[i].macaddr, conf->loadedgtilist[i].macaddr);
-            //this will have to be changed to match the loaded version
-            gtilist[i].msgtypelistperm = createnewchosendllist();
-        }
+    makeinverterlistfromstruct(&gtilist);
 
-    }
-
-    chosenperm = conf->loadedmsgs;
-
-
+    logwriteln(debugfilename,"here are the message components that we are loading: ");
+    traverseright(chosenperm,debugprintnodeinfo);
+    makesignallistfromstruct(chosenperm);
 
     return 0;
 }
@@ -1012,4 +1000,50 @@ int removeinverterfromgtilist(int index)
     //deactivate inverter index
     gtilist[index].extant = 0;
     return 0;
+}
+
+int makeinverterlistfromstruct(GTIinfo *gtilist)
+{
+    int i;
+    //add inverter info to active tree
+    gtk_list_store_append(store, &iter);
+    for(i = 0; i< MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+            gtk_list_store_set(store, &iter, COL_NAME, gtilist[i].name, COL_IPADDR, gtilist[i].ipaddr, COL_MACADDR, gtilist[i].macaddr,-1);
+        }
+    }
+    model = GTK_TREE_MODEL(store);
+
+    gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+
+    gtk_widget_show_all(window);
+    return 0;
+}
+
+int makesignallistfromstruct(chosenmsg *chosenperm)
+{
+    traverseright(chosenperm,addmsgfromstruct);
+
+    //make new line visible
+    gtk_widget_show_all(window);
+    return 0;
+}
+
+void addmsgfromstruct(chosenmsg *chosen)
+{
+    if(chosen->data != -1)
+    {
+        gtk_list_store_append(sigstore, &sigiter);
+        gtk_list_store_set(sigstore,&sigiter, COL_INDEX, chosen->data, COL_SIGNAME, signallist[chosen->data].name, COL_VALUE, chosen->value, -1);
+        sigmodel = GTK_TREE_MODEL(sigstore);
+        gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
+
+
+        //maintain log
+        snprintf(debugbuffer,128,"adding component to message: %s",signallist[chosen->data].name);
+        logwriteln(debugfilename,debugbuffer);
+    }
+
 }

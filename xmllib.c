@@ -65,7 +65,7 @@ int writemessageconfigs(FILE *fp, chosenmsg *chosenperm)
     }while(current != chosenperm);
 }
 
-configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
+void loadinverterconfig(char *filename, chosenmsg *loadedmsgs, GTIinfo *loadedgtilist)
 {
     FILE *fp;
     FILE *fpdebug;
@@ -81,12 +81,10 @@ configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
     int i;
 
 
-    configstore loadedconfig;
+
 
     //initialize counter for new inverters
-    loadedconfig.invcreateindex = 0;
-    loadedconfig.loadedmsgs = createnewchosendllist();
-
+    int invcreateindex = 0;
     //before proceeding, clear current conifguration, if any
     //first remove inverters
     for(i = 0; i< MAX_N_INVERTERS; i++)
@@ -94,7 +92,12 @@ configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
         removeinverterfromgtilist(i);
     }
     //now remove message components
-    clearlist(chosenperm);
+    clearlist(loadedmsgs);
+    //initialize pointer to current message element
+    chosenmsg *currentmsgptr = loadedmsgs;
+
+    logwriteln(debugfilename,"cleared old message list, see?");
+    traverseright(loadedmsgs,debugprintnodeinfo);
 
     //state tracking variables
     status.xmlverified = 0;
@@ -133,11 +136,11 @@ configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
         fgets(linebuffer,256,fp);
         status.lineno++;
 
-        retval = processline(linebuffer, &status, &loadedconfig, fpdebug);
+        retval = processline(linebuffer, &status, loadedmsgs, loadedgtilist, currentmsgptr, &currentmsgptr, invcreateindex, fpdebug);
 
         position = ftell(fp);
 
-        fprintf(fpdebug,"\nposition: %d, lineno: %d",position, status.lineno);
+        //fprintf(fpdebug,"\nposition: %d, lineno: %d",position, status.lineno);
         //sprintf(parsedebugbuffer,"\nposition: %d, lineno: %d",position, status.lineno);
         //logwriteln(parsedebugfilename,parsedebugbuffer);
         //fprintf(fpdebug," processline() return code: %d", retval);
@@ -145,10 +148,10 @@ configstore *loadinverterconfig(char *filename, chosenmsg *chosenperm)
 
     }
 
-    return &loadedconfig;
+    return;
 }
 
-int processline(const char *line, readstatus *status, configstore *loadedconfig, FILE *fpdebug)
+int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTIinfo *loadedgtilist, chosenmsg *currentmsgptr, chosenmsg **currentptrptr, int invcreateindex, FILE *fpdebug)
 {
     int len = strlen(line);
     int i;
@@ -158,6 +161,7 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
     char *retval = 0;
     char parsedebugbuffer[256];
     char retstring[256];
+    chosenmsg *tempmsgptr;
 
     //printf("status : %d", status->lineno);
     //fprintf(fpdebug,"line: %s",line);
@@ -288,9 +292,8 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"name",retstring);
-                    logwriteln(debugfilename,retstring);
-                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].name,retstring);
-                    fprintf(fpdebug,"\ninverter name attribute at line %d : %s",status->lineno, loadedconfig->loadedgtilist[loadedconfig->invcreateindex].name);
+                    strcpy(loadedgtilist[invcreateindex].name,retstring);
+                    fprintf(fpdebug,"\ninverter name attribute at line %d : %s",status->lineno, loadedgtilist[invcreateindex].name);
                     return 0;
                 }
 
@@ -298,8 +301,8 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"ipaddr",retstring);
-                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].ipaddr,retstring);
-                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d : %s",status->lineno,loadedconfig->loadedgtilist[loadedconfig->invcreateindex].ipaddr);
+                    strcpy(loadedgtilist[invcreateindex].ipaddr,retstring);
+                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d : %s",status->lineno,loadedgtilist[invcreateindex].ipaddr);
                     return 0;
                 }
 
@@ -307,8 +310,8 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"macaddr",retstring);
-                    strcpy(loadedconfig->loadedgtilist[loadedconfig->invcreateindex].macaddr, retstring);
-                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d : %s",status->lineno, loadedconfig->loadedgtilist[loadedconfig->invcreateindex].macaddr);
+                    strcpy(loadedgtilist[invcreateindex].macaddr, retstring);
+                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d : %s",status->lineno, loadedgtilist[invcreateindex].macaddr);
                     return 0;
                 }
 
@@ -317,9 +320,9 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 {
                     fprintf(fpdebug,"\nclosing an inverter");
                     status->readinganinverter = 0;
-                    loadedconfig->loadedgtilist[loadedconfig->invcreateindex].extant = 1;
+                    loadedgtilist[invcreateindex].extant = 1;
                     //increment counter for loaded inverters
-                    loadedconfig->invcreateindex++;
+                    invcreateindex++;
                     return 0;
                 }
 
@@ -356,16 +359,18 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 retval = strstr(line,"<index>");
                 if(retval != NULL)
                 {
-                    loadedconfig->currentmsgptr->data = readintbetweentags(line,"index");
-                    fprintf(fpdebug,"\nreading component index at line %d : %d",status->lineno, loadedconfig->currentmsgptr->data);
+                    sprintf(debugbuffer,"writing to msgptr: %d",(int) currentmsgptr);
+                    logwriteln(debugfilename,debugbuffer);
+                    currentmsgptr->data = readintbetweentags(line,"index");
+                    fprintf(fpdebug,"\nreading component index at line %d : %d",status->lineno, currentmsgptr->data);
                     return 0;
                 }
 
                 retval = strstr(line,"<value>");
                 if(retval != NULL)
                 {
-                    loadedconfig->currentmsgptr->value = readdoublebetweentags(line,"value");
-                    fprintf(fpdebug,"\nreading component value at line %d : %f",status->lineno, loadedconfig->currentmsgptr->value);
+                    currentmsgptr->value = readdoublebetweentags(line,"value");
+                    fprintf(fpdebug,"\nreading component value at line %d : %f",status->lineno, currentmsgptr->value);
                     return 0;
                 }
 
@@ -373,6 +378,8 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 if(retval != NULL)
                 {
                     fprintf(fpdebug,"\nclosing a message component");
+                    logwriteln(debugfilename,"building message component list... here it is now:");
+                    traverseright(currentmsgptr,debugprintnodeinfo);
                     status->readingamessagecomp = 0;
                     return 0;
                 }
@@ -388,7 +395,14 @@ int processline(const char *line, readstatus *status, configstore *loadedconfig,
                 if(retval != NULL)
                 {
                     status->readingamessagecomp = 1;
-                    loadedconfig->currentmsgptr = insertchosenmsg(loadedconfig->loadedmsgs,0,0);
+                    tempmsgptr = insertchosenmsg(loadedmsgs,0,0);
+                    sprintf(debugbuffer,"current value of tempmsgptr: %d", (int) tempmsgptr);
+                    logwriteln(debugfilename,debugbuffer);
+
+                    memcpy(currentptrptr,&tempmsgptr,sizeof(void*));
+                    sprintf(debugbuffer,"current value of msgptr: %d", (int) currentmsgptr);
+                    logwriteln(debugfilename,debugbuffer);
+                    //memcpy(&currentmsgptr,currentmsgptr,sizeof(currentmsgptr));
                     fprintf(fpdebug,"\nopening a new message");
                     return 0;
                 }
@@ -451,8 +465,8 @@ int readintbetweentags(char *line, char *tag)
 
     stripleadingspaces(line,clean);
     sscanf(clean,format,&retval);
-    sprintf(debugbuffer,"%d",retval);
-    logwriteln(debugfilename,debugbuffer);
+    //sprintf(debugbuffer,"%d",retval);
+    //logwriteln(debugfilename,debugbuffer);
     return retval;
 }
 
@@ -464,18 +478,18 @@ double readdoublebetweentags(char *line, char *tag)
     double retval;
 
 
-    logwriteln(debugfilename,line);
-    logwriteln(debugfilename,tag);
+    //logwriteln(debugfilename,line);
+    //logwriteln(debugfilename,tag);
     sprintf(format,"<%s>%s</%s>\n",tag,type,tag);
     logwriteln(debugfilename,format);
     stripleadingspaces(line,clean);
 
-    sprintf(debugbuffer,"%s",clean);
-    logwriteln(debugfilename,debugbuffer);
+    //sprintf(debugbuffer,"%s",clean);
+    //logwriteln(debugfilename,debugbuffer);
 
     sscanf(clean,format,&retval);
-    sprintf(debugbuffer,"double returned %lf",retval);
-    logwriteln(debugfilename,debugbuffer);
+    //sprintf(debugbuffer,"double returned %lf",retval);
+    //logwriteln(debugfilename,debugbuffer);
     return retval;
 }
 
@@ -490,8 +504,8 @@ void readstringbetweentags(char *line, char *tag, char *retstring)
     stripleadingspaces(line,clean);
 
     sscanf(clean,format,retstring);
-    sprintf(debugbuffer," returned string: %s",retstring);
-    logwriteln(debugfilename,debugbuffer);
+    //sprintf(debugbuffer," returned string: %s",retstring);
+    //logwriteln(debugfilename,debugbuffer);
 }
 
 void stripleadingspaces(char *line, char *clean)
@@ -500,8 +514,8 @@ void stripleadingspaces(char *line, char *clean)
     int j = 0;
     int shouldcopy = 0;
 
-    sprintf(debugbuffer,"length of input: %d", strlen(line));
-    logwriteln(debugfilename,debugbuffer);
+    //sprintf(debugbuffer,"length of input: %d", strlen(line));
+    //logwriteln(debugfilename,debugbuffer);
 
 
     for(i = 0; i<strlen(line); i++)
@@ -509,7 +523,7 @@ void stripleadingspaces(char *line, char *clean)
         if(*(line + i) != ' ')
         {
             strcpy(clean,line + i);
-            logwriteln(debugfilename,clean);
+            //logwriteln(debugfilename,clean);
             return;
         }
 

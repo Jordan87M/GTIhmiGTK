@@ -32,8 +32,6 @@ typedef struct GTIinfo_t{
 typedef struct configstore_t{
     chosenmsg *loadedmsgs;
     GTIinfo loadedgtilist[MAX_N_INVERTERS];
-    int invcreateindex;
-    chosenmsg *currentmsgptr;
 }configstore;
 
 //extern chosenmsg *chosenperm;
@@ -62,6 +60,8 @@ chosenmsg *findbydata(chosenmsg *start, int searchfor);
 chosenmsg *setvalue(chosenmsg *start, int searchfor, double newvalue);
 void flipbytes(void *ptr, int length);
 int removeinverterfromgtilist(int index);
+int makeinverterlistfromstruct(GTIinfo *gtilist);
+void addmsgfromstruct(chosenmsg *chosen);
 
 
 
