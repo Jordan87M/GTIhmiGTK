@@ -5,13 +5,13 @@
 #include "logconf.h"
 
 
-int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm)
+int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm,char *filename)
 {
     int i;
     FILE *fp;
 
 
-    fp = fopen("tempname.config","w");
+    fp = fopen(filename,"w");
     fprintf(fp,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     fprintf(fp,"\n<format>%d.%d</format>",formatvmajor,formatvminor);
 
@@ -49,7 +49,7 @@ int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm)
 int writeinverterconfig(FILE *fp,char *name,char *ipaddr,char *macaddr)
 {
     int retval;
-    retval = fprintf(fp,"\n        <inverter>\n            <name>%s </name>\n            <ipaddr>%s</ipaddr>\n            <macaddr>%s</macaddr>\n        </inverter>",name,ipaddr,macaddr);
+    retval = fprintf(fp,"\n        <inverter>\n            <name>%s </name>\n            <ipaddr>%s </ipaddr>\n            <macaddr>%s </macaddr>\n        </inverter>",name,ipaddr,macaddr);
     return retval;
 }
 
@@ -136,7 +136,7 @@ void loadinverterconfig(char *filename, chosenmsg *loadedmsgs, GTIinfo *loadedgt
         fgets(linebuffer,256,fp);
         status.lineno++;
 
-        retval = processline(linebuffer, &status, loadedmsgs, loadedgtilist, currentmsgptr, &currentmsgptr, invcreateindex, fpdebug);
+        retval = processline(linebuffer, &status, loadedmsgs, loadedgtilist, currentmsgptr, &currentmsgptr, &invcreateindex, fpdebug);
 
         position = ftell(fp);
 
@@ -151,7 +151,7 @@ void loadinverterconfig(char *filename, chosenmsg *loadedmsgs, GTIinfo *loadedgt
     return;
 }
 
-int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTIinfo *loadedgtilist, chosenmsg *currentmsgptr, chosenmsg **currentptrptr, int invcreateindex, FILE *fpdebug)
+int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTIinfo *loadedgtilist, chosenmsg *currentmsgptr, chosenmsg **currentptrptr, int *invcreateindex, FILE *fpdebug)
 {
     int len = strlen(line);
     int i;
@@ -292,8 +292,8 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"name",retstring);
-                    strcpy(loadedgtilist[invcreateindex].name,retstring);
-                    fprintf(fpdebug,"\ninverter name attribute at line %d : %s",status->lineno, loadedgtilist[invcreateindex].name);
+                    strcpy(loadedgtilist[*invcreateindex].name,retstring);
+                    fprintf(fpdebug,"\nadding inverter name attribute at line %d to %d: %s",status->lineno, *invcreateindex, loadedgtilist[*invcreateindex].name);
                     return 0;
                 }
 
@@ -301,8 +301,8 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"ipaddr",retstring);
-                    strcpy(loadedgtilist[invcreateindex].ipaddr,retstring);
-                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d : %s",status->lineno,loadedgtilist[invcreateindex].ipaddr);
+                    strcpy(loadedgtilist[*invcreateindex].ipaddr,retstring);
+                    fprintf(fpdebug,"\ninverter ipaddr attribute at line %d to %d: %s",status->lineno, *invcreateindex, loadedgtilist[*invcreateindex].ipaddr);
                     return 0;
                 }
 
@@ -310,8 +310,8 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 if(retval != NULL)
                 {
                     readstringbetweentags(line,"macaddr",retstring);
-                    strcpy(loadedgtilist[invcreateindex].macaddr, retstring);
-                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d : %s",status->lineno, loadedgtilist[invcreateindex].macaddr);
+                    strcpy(loadedgtilist[*invcreateindex].macaddr, retstring);
+                    fprintf(fpdebug,"\ninverter macaddr attribute at line %d to %d: %s",status->lineno, *invcreateindex, loadedgtilist[*invcreateindex].macaddr);
                     return 0;
                 }
 
@@ -320,9 +320,12 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 {
                     fprintf(fpdebug,"\nclosing an inverter");
                     status->readinganinverter = 0;
-                    loadedgtilist[invcreateindex].extant = 1;
+                    loadedgtilist[*invcreateindex].extant = 1;
+                    fprintf(fpdebug,"\nmarking inverter %d as active", *invcreateindex);
                     //increment counter for loaded inverters
-                    invcreateindex++;
+                    int newinvindex = (*invcreateindex) + 1;
+                    fprintf(fpdebug,"\nnextindex : %d",newinvindex);
+                    memcpy(invcreateindex,&newinvindex, sizeof(int));
                     return 0;
                 }
 
@@ -336,6 +339,8 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 if(retval != NULL)
                 {
                     status->readinganinverter = 1;
+                    loadedgtilist[*invcreateindex].msgtypelistperm = createnewchosendllist();
+                    loadedgtilist[*invcreateindex].reclistperm = createnewchosendllist();
                     fprintf(fpdebug,"\nopening a new inverter");
                     return 0;
                 }
@@ -396,13 +401,13 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 {
                     status->readingamessagecomp = 1;
                     tempmsgptr = insertchosenmsg(loadedmsgs,0,0);
-                    sprintf(debugbuffer,"current value of tempmsgptr: %d", (int) tempmsgptr);
-                    logwriteln(debugfilename,debugbuffer);
+                    //sprintf(debugbuffer,"current value of tempmsgptr: %d", (int) tempmsgptr);
+                    //logwriteln(debugfilename,debugbuffer);
 
                     memcpy(currentptrptr,&tempmsgptr,sizeof(void*));
-                    sprintf(debugbuffer,"current value of msgptr: %d", (int) currentmsgptr);
-                    logwriteln(debugfilename,debugbuffer);
-                    //memcpy(&currentmsgptr,currentmsgptr,sizeof(currentmsgptr));
+                    //sprintf(debugbuffer,"current value of msgptr: %d", (int) currentmsgptr);
+                    //logwriteln(debugfilename,debugbuffer);
+
                     fprintf(fpdebug,"\nopening a new message");
                     return 0;
                 }

@@ -11,6 +11,8 @@
 
 
 //global gui pointers
+GtkWidget *savedialog;
+GtkWidget *loaddialog;
 
 GtkListStore *store;
 GtkTreeIter iter;
@@ -447,6 +449,20 @@ int sendoneoff(GtkWidget *widget, gpointer data)
     //first find out which inverter is selected
     int index;
     int retval;
+    int i;
+    int listempty = 1;
+
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+            listempty = 0;
+        }
+    }
+    if(listempty == 1)
+    {
+        return -1;
+    }
 
     index = getselectedactive();
     if(index < 0)
@@ -862,6 +878,8 @@ int addnewinverter(GtkWidget *widget, gpointer data)
 int removeinverter(GtkWidget *widget, gpointer data)
 {
     int removeindex;
+    int i;
+    int listempty = 1;
 
     char commandbuffer[256];
     char *name;
@@ -877,8 +895,33 @@ int removeinverter(GtkWidget *widget, gpointer data)
     GtkTreeModel *activemodel;
     GList *activesellist;
 
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+            listempty = 0;
+        }
+    }
+    if(listempty == 1)
+    {
+        return -1;
+    }
+
     //find out which inverter, if any, has been selected
     activesel = gtk_tree_view_get_selection(activetree);
+    if(activesel == NULL)
+    {
+        return -1;
+    }
+    if(gtilist[i].reclistperm == NULL)
+    {
+        return -2;
+    }
+    if(gtilist[i].msgtypelistperm == NULL)
+    {
+        return -3;
+    }
+
     activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
     gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
 
@@ -965,26 +1008,68 @@ int getselectedactive(void)
 
 int saveconfigtofile(void)
 {
+    GtkFileChooser *chooser;
+    gint res;
+
     logwriteln(debugfilename,"saving current configuration to file...");
-    saveinverterconfig(&gtilist,chosenperm);
+
+    savedialog = gtk_file_chooser_dialog_new("Save configuration as...",window,GTK_FILE_CHOOSER_ACTION_SAVE,
+                                            "Cancel",GTK_RESPONSE_CANCEL,
+                                            "Save",GTK_RESPONSE_ACCEPT,NULL);
+    chooser = GTK_FILE_CHOOSER(savedialog);
+
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser,TRUE);
+
+
+    gtk_file_chooser_set_current_name(chooser, "Untitled document");
+
+
+    res = gtk_dialog_run(GTK_DIALOG(savedialog));
+    if(res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(savedialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+        saveinverterconfig(&gtilist,chosenperm,filename);
+
+    }
+
+    gtk_widget_destroy(savedialog);
     return 0;
 }
 
 int loadconfigfromfile(void)
 {
     int i;
-    configstore *conf;
-    logwriteln(debugfilename,"loading configuration from file...");
-    sprintf(debugbuffer,"node ptr: %d", (int) chosenperm);
-    logwriteln(debugfilename,debugbuffer);
-    loadinverterconfig("tempname.config",chosenperm, &gtilist);
+    gint res;
 
-    makeinverterlistfromstruct(&gtilist);
 
-    logwriteln(debugfilename,"here are the message components that we are loading: ");
-    traverseright(chosenperm,debugprintnodeinfo);
-    makesignallistfromstruct(chosenperm);
+    loaddialog = gtk_file_chooser_dialog_new("Load configuration from file...", window, GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        "Cancel", GTK_RESPONSE_CANCEL,
+                                        "Open", GTK_RESPONSE_ACCEPT,NULL);
+    res = gtk_dialog_run(GTK_DIALOG(loaddialog));
+    if(res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(loaddialog);
+        filename = gtk_file_chooser_get_filename(chooser);
 
+        sprintf(debugbuffer,"loading configuration from file %s",filename);
+        logwriteln(debugfilename,debugbuffer);
+        sprintf(debugbuffer,"node ptr: %d", (int) chosenperm);
+        logwriteln(debugfilename,debugbuffer);
+        loadinverterconfig(filename,chosenperm, &gtilist);
+
+        makeinverterlistfromstruct(&gtilist);
+
+        logwriteln(debugfilename,"here are the message components that we are loading: ");
+        traverseright(chosenperm,debugprintnodeinfo);
+        makesignallistfromstruct(chosenperm);
+    }
+
+
+
+    gtk_widget_destroy(loaddialog);
     return 0;
 }
 
@@ -1006,11 +1091,12 @@ int makeinverterlistfromstruct(GTIinfo *gtilist)
 {
     int i;
     //add inverter info to active tree
-    gtk_list_store_append(store, &iter);
+
     for(i = 0; i< MAX_N_INVERTERS; i++)
     {
         if(gtilist[i].extant == 1)
         {
+            gtk_list_store_append(store, &iter);
             gtk_list_store_set(store, &iter, COL_NAME, gtilist[i].name, COL_IPADDR, gtilist[i].ipaddr, COL_MACADDR, gtilist[i].macaddr,-1);
         }
     }
