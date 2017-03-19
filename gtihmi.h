@@ -2,12 +2,18 @@
 #define __GTIHMIAPP_H
 
 #include <gtk.h>
+#include <math.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
+#include "gtihmi.h"
+#include "logconf.h"
 
-#define MAX_N_INVERTERS         10
-#define MAX_NAME_LENGTH         48
-#define MAX_MSG_COMP            5
+#define MAX_N_INVERTERS             10
+#define MAX_NAME_LENGTH             48
+#define MAX_MSG_COMP                5
 
+#define DATA_COLLECTION_INTERVAL    200 //in ms
 
 typedef struct chosenmsg_t{
     int data;
@@ -26,6 +32,7 @@ typedef struct GTIinfo_t{
     short int lastseqnum;
     chosenmsg *msgtypelistperm;
     chosenmsg *reclistperm;
+    struct sockaddr_in server;
 
 } GTIinfo;
 
@@ -39,10 +46,6 @@ typedef struct configstore_t{
 extern char debugfilename[64];
 extern char datafilename[64];
 
-#include <math.h>
-
-#include "gtihmi.h"
-#include "logconf.h"
 
 extern char debugbuffer[LOG_BUFFER_SIZE];
 

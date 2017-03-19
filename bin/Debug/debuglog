@@ -1,0 +1,54 @@
+
+Wed_Mar_15_13:28:23_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Wed_Mar_15_13:28:23_2017: Misdirected Message
+Wed_Mar_15_13:28:23_2017: Unimplemented Protocol
+Wed_Mar_15_13:28:23_2017: Unimplemented Function
+Wed_Mar_15_13:28:23_2017: GP_ACK
+Wed_Mar_15_13:28:23_2017: Inverter Waking Up
+Wed_Mar_15_13:28:23_2017: Set Phase
+Wed_Mar_15_13:28:23_2017: Set Amplitude
+Wed_Mar_15_13:28:23_2017: Set Real Power
+Wed_Mar_15_13:28:23_2017: Set Reactive Power
+Wed_Mar_15_13:28:23_2017: Set Frequency
+Wed_Mar_15_13:28:23_2017: Select Grid Following
+Wed_Mar_15_13:28:23_2017: Select Standalone
+Wed_Mar_15_13:28:23_2017: Disconnect
+Wed_Mar_15_13:28:23_2017: Connect
+Wed_Mar_15_13:28:23_2017: Lock Screen
+Wed_Mar_15_13:28:23_2017: Unlock Screen
+Wed_Mar_15_13:28:23_2017: Display Screen1
+Wed_Mar_15_13:28:23_2017: Display Screen2
+Wed_Mar_15_13:28:23_2017: Display Screen3
+Wed_Mar_15_13:28:23_2017: Display Screen4
+Wed_Mar_15_13:28:23_2017: Request Phase
+Wed_Mar_15_13:28:23_2017: Request Amplitude
+Wed_Mar_15_13:28:23_2017: Request Current Mode
+Wed_Mar_15_13:28:23_2017: Request PWM Period
+Wed_Mar_15_13:28:23_2017: Request nsamples
+Wed_Mar_15_13:28:23_2017: Request Output Voltage
+Wed_Mar_15_13:28:23_2017: Request Output Current
+Wed_Mar_15_13:28:23_2017: Request Real Power
+Wed_Mar_15_13:28:23_2017: Request Reactive Power
+Wed_Mar_15_13:28:23_2017: Request Frequency
+Wed_Mar_15_13:28:23_2017: Response: Phase
+Wed_Mar_15_13:28:23_2017: Response: Amplitude
+Wed_Mar_15_13:28:23_2017: Response: Current Mode
+Wed_Mar_15_13:28:23_2017: Response: PWM Period
+Wed_Mar_15_13:28:23_2017: Response: nsamples
+Wed_Mar_15_13:28:23_2017: Response: Output Voltage
+Wed_Mar_15_13:28:23_2017: Response: Output Current
+Wed_Mar_15_13:28:23_2017: Response: Real Power
+Wed_Mar_15_13:28:23_2017: Response: Reactive Power
+Wed_Mar_15_13:28:23_2017: Response: Frequency
+Wed_Mar_15_13:28:23_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 11860560
+    rlink: 11860560
+    llink: 11860560
+Wed_Mar_15_13:28:56_2017: GTK application finishes with retval: 0
+Wed_Mar_15_13:28:56_2017: bye!

@@ -3,6 +3,7 @@
 #include "xmllib.h"
 #include "gtihmi.h"
 #include "logconf.h"
+#include "gpdefs.h"
 
 
 int saveinverterconfig(GTIinfo *gtilist, chosenmsg *chosenperm,char *filename)
@@ -302,6 +303,9 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 {
                     readstringbetweentags(line,"ipaddr",retstring);
                     strcpy(loadedgtilist[*invcreateindex].ipaddr,retstring);
+                    loadedgtilist[*invcreateindex].server.sin_addr.s_addr = inet_addr(retstring);
+                    loadedgtilist[*invcreateindex].server.sin_family = AF_INET;
+                    loadedgtilist[*invcreateindex].server.sin_port = htons(GP_PORT);
                     fprintf(fpdebug,"\ninverter ipaddr attribute at line %d to %d: %s",status->lineno, *invcreateindex, loadedgtilist[*invcreateindex].ipaddr);
                     return 0;
                 }

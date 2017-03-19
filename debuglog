@@ -1,0 +1,2194 @@
+
+Sun_Mar_19_02:32:59_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 19970464
+    rlink: 19970416
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 19970512
+    rlink: 19970464
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 19970560
+    rlink: 19970512
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 19970608
+    rlink: 19970560
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 19970656
+    rlink: 19970608
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: creating a new node: 
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 19970704
+    rlink: 19970656
+    llink: 19970416
+Sun_Mar_19_02:32:59_2017: Misdirected Message
+Sun_Mar_19_02:32:59_2017: Unimplemented Protocol
+Sun_Mar_19_02:32:59_2017: Unimplemented Function
+Sun_Mar_19_02:32:59_2017: GP_ACK
+Sun_Mar_19_02:32:59_2017: Inverter Waking Up
+Sun_Mar_19_02:32:59_2017: Set Phase
+Sun_Mar_19_02:32:59_2017: Set Amplitude
+Sun_Mar_19_02:32:59_2017: Set Real Power
+Sun_Mar_19_02:32:59_2017: Set Reactive Power
+Sun_Mar_19_02:32:59_2017: Set Frequency
+Sun_Mar_19_02:32:59_2017: Select Grid Following
+Sun_Mar_19_02:32:59_2017: Select Standalone
+Sun_Mar_19_02:32:59_2017: Disconnect
+Sun_Mar_19_02:32:59_2017: Connect
+Sun_Mar_19_02:32:59_2017: Lock Screen
+Sun_Mar_19_02:32:59_2017: Unlock Screen
+Sun_Mar_19_02:32:59_2017: Display Screen1
+Sun_Mar_19_02:32:59_2017: Display Screen2
+Sun_Mar_19_02:32:59_2017: Display Screen3
+Sun_Mar_19_02:32:59_2017: Display Screen4
+Sun_Mar_19_02:32:59_2017: Request Phase
+Sun_Mar_19_02:32:59_2017: Request Amplitude
+Sun_Mar_19_02:32:59_2017: Request Current Mode
+Sun_Mar_19_02:32:59_2017: Request PWM Period
+Sun_Mar_19_02:32:59_2017: Request nsamples
+Sun_Mar_19_02:32:59_2017: Request Output Voltage
+Sun_Mar_19_02:32:59_2017: Request Output Current
+Sun_Mar_19_02:32:59_2017: Request Real Power
+Sun_Mar_19_02:32:59_2017: Request Reactive Power
+Sun_Mar_19_02:32:59_2017: Request Frequency
+Sun_Mar_19_02:32:59_2017: Response: Phase
+Sun_Mar_19_02:32:59_2017: Response: Amplitude
+Sun_Mar_19_02:32:59_2017: Response: Current Mode
+Sun_Mar_19_02:32:59_2017: Response: PWM Period
+Sun_Mar_19_02:32:59_2017: Response: nsamples
+Sun_Mar_19_02:32:59_2017: Response: Output Voltage
+Sun_Mar_19_02:32:59_2017: Response: Output Current
+Sun_Mar_19_02:32:59_2017: Response: Real Power
+Sun_Mar_19_02:32:59_2017: Response: Reactive Power
+Sun_Mar_19_02:32:59_2017: Response: Frequency
+Sun_Mar_19_02:32:59_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 19970752
+    llink: 19970752
+Sun_Mar_19_02:32:59_2017: opened socket with file description: 3
+Sun_Mar_19_02:33:10_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Sun_Mar_19_02:33:10_2017: node ptr: 19970752
+Sun_Mar_19_02:33:10_2017: cleared old message list, see?
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 19970752
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: reading a file that is 870 bytes long
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 25426672
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 25426672
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 24909168
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 24909168
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 24905248
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 24905248
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 24905248
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 24910448
+    rlink: 24905248
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 24910448
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 24910448
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 24905248
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 24910448
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 24910448
+    rlink: 24905248
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 25026336
+    rlink: 24910448
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 25026336
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 24910448
+    rlink: 24905248
+    llink: 25026336
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 24910448
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 24905248
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 25026336
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 25026336
+    rlink: 24910448
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: creating a new node: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 25037808
+    rlink: 25026336
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: writing to msgptr: 25037808
+Sun_Mar_19_02:33:10_2017: <value>%lf</value>
+
+Sun_Mar_19_02:33:10_2017: building message component list... here it is now:
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 25026336
+    rlink: 24910448
+    llink: 25037808
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 24910448
+    rlink: 24905248
+    llink: 25026336
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 24910448
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 24905248
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 25037808
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 25037808
+    rlink: 25026336
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: here are the message components that we are loading: 
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 25037808
+    rlink: 25026336
+    llink: 19970752
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 25026336
+    rlink: 24910448
+    llink: 25037808
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 24910448
+    rlink: 24905248
+    llink: 25026336
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 24905248
+    rlink: 24909168
+    llink: 24910448
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 24909168
+    rlink: 25426672
+    llink: 24905248
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25426672
+    rlink: 19970752
+    llink: 24909168
+Sun_Mar_19_02:33:10_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 19970752
+    rlink: 25037808
+    llink: 25426672
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Phase
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Output Voltage
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Output Current
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Real Power
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Reactive Power
+Sun_Mar_19_02:33:10_2017: adding component to message: Request Frequency
+Sun_Mar_19_02:34:07_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 10889632
+    rlink: 10889584
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 10889680
+    rlink: 10889632
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 10889728
+    rlink: 10889680
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 10889776
+    rlink: 10889728
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 10889824
+    rlink: 10889776
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: creating a new node: 
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 10889872
+    rlink: 10889824
+    llink: 10889584
+Sun_Mar_19_02:34:07_2017: Misdirected Message
+Sun_Mar_19_02:34:07_2017: Unimplemented Protocol
+Sun_Mar_19_02:34:07_2017: Unimplemented Function
+Sun_Mar_19_02:34:07_2017: GP_ACK
+Sun_Mar_19_02:34:07_2017: Inverter Waking Up
+Sun_Mar_19_02:34:07_2017: Set Phase
+Sun_Mar_19_02:34:07_2017: Set Amplitude
+Sun_Mar_19_02:34:07_2017: Set Real Power
+Sun_Mar_19_02:34:07_2017: Set Reactive Power
+Sun_Mar_19_02:34:07_2017: Set Frequency
+Sun_Mar_19_02:34:07_2017: Select Grid Following
+Sun_Mar_19_02:34:07_2017: Select Standalone
+Sun_Mar_19_02:34:07_2017: Disconnect
+Sun_Mar_19_02:34:07_2017: Connect
+Sun_Mar_19_02:34:07_2017: Lock Screen
+Sun_Mar_19_02:34:07_2017: Unlock Screen
+Sun_Mar_19_02:34:07_2017: Display Screen1
+Sun_Mar_19_02:34:07_2017: Display Screen2
+Sun_Mar_19_02:34:07_2017: Display Screen3
+Sun_Mar_19_02:34:07_2017: Display Screen4
+Sun_Mar_19_02:34:07_2017: Request Phase
+Sun_Mar_19_02:34:07_2017: Request Amplitude
+Sun_Mar_19_02:34:07_2017: Request Current Mode
+Sun_Mar_19_02:34:07_2017: Request PWM Period
+Sun_Mar_19_02:34:07_2017: Request nsamples
+Sun_Mar_19_02:34:07_2017: Request Output Voltage
+Sun_Mar_19_02:34:07_2017: Request Output Current
+Sun_Mar_19_02:34:07_2017: Request Real Power
+Sun_Mar_19_02:34:07_2017: Request Reactive Power
+Sun_Mar_19_02:34:07_2017: Request Frequency
+Sun_Mar_19_02:34:07_2017: Response: Phase
+Sun_Mar_19_02:34:07_2017: Response: Amplitude
+Sun_Mar_19_02:34:07_2017: Response: Current Mode
+Sun_Mar_19_02:34:07_2017: Response: PWM Period
+Sun_Mar_19_02:34:07_2017: Response: nsamples
+Sun_Mar_19_02:34:07_2017: Response: Output Voltage
+Sun_Mar_19_02:34:07_2017: Response: Output Current
+Sun_Mar_19_02:34:07_2017: Response: Real Power
+Sun_Mar_19_02:34:07_2017: Response: Reactive Power
+Sun_Mar_19_02:34:07_2017: Response: Frequency
+Sun_Mar_19_02:34:07_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 10889920
+    llink: 10889920
+Sun_Mar_19_02:34:07_2017: opened socket with file description: 3
+Sun_Mar_19_02:34:18_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Sun_Mar_19_02:34:18_2017: node ptr: 10889920
+Sun_Mar_19_02:34:18_2017: cleared old message list, see?
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 10889920
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: reading a file that is 870 bytes long
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 16301360
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16301360
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 14827440
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 14827440
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 16300400
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16300400
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 16385808
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16385808
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 16403904
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16403904
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: creating a new node: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: writing to msgptr: 16413696
+Sun_Mar_19_02:34:18_2017: <value>%lf</value>
+
+Sun_Mar_19_02:34:18_2017: building message component list... here it is now:
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: here are the message components that we are loading: 
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:18_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Phase
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Output Voltage
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Output Current
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Real Power
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Reactive Power
+Sun_Mar_19_02:34:18_2017: adding component to message: Request Frequency
+Sun_Mar_19_02:34:23_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:23_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:34:23_2017: exhausted message type list...
+Sun_Mar_19_02:34:23_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:34:38_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:34:38_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:34:38_2017: exhausted message type list...
+Sun_Mar_19_02:34:38_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:38:04_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:38:04_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:38:04_2017: exhausted message type list...
+Sun_Mar_19_02:38:04_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x03 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:38:17_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:38:17_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:38:17_2017: exhausted message type list...
+Sun_Mar_19_02:38:17_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x04 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:38:26_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 16413696
+    rlink: 16403904
+    llink: 10889920
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 16403904
+    rlink: 16385808
+    llink: 16413696
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 16385808
+    rlink: 16300400
+    llink: 16403904
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 16300400
+    rlink: 14827440
+    llink: 16385808
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 14827440
+    rlink: 16301360
+    llink: 16300400
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 16301360
+    rlink: 10889920
+    llink: 14827440
+Sun_Mar_19_02:38:26_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10889920
+    rlink: 16413696
+    llink: 16301360
+Sun_Mar_19_02:38:26_2017: exhausted message type list...
+Sun_Mar_19_02:38:26_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x05 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:42:15_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 10365344
+    rlink: 10365296
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 10365392
+    rlink: 10365344
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 10365440
+    rlink: 10365392
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 10365488
+    rlink: 10365440
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 10365536
+    rlink: 10365488
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: creating a new node: 
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 10365584
+    rlink: 10365536
+    llink: 10365296
+Sun_Mar_19_02:42:15_2017: Misdirected Message
+Sun_Mar_19_02:42:15_2017: Unimplemented Protocol
+Sun_Mar_19_02:42:15_2017: Unimplemented Function
+Sun_Mar_19_02:42:15_2017: GP_ACK
+Sun_Mar_19_02:42:15_2017: Inverter Waking Up
+Sun_Mar_19_02:42:15_2017: Set Phase
+Sun_Mar_19_02:42:15_2017: Set Amplitude
+Sun_Mar_19_02:42:15_2017: Set Real Power
+Sun_Mar_19_02:42:15_2017: Set Reactive Power
+Sun_Mar_19_02:42:15_2017: Set Frequency
+Sun_Mar_19_02:42:15_2017: Select Grid Following
+Sun_Mar_19_02:42:15_2017: Select Standalone
+Sun_Mar_19_02:42:15_2017: Disconnect
+Sun_Mar_19_02:42:15_2017: Connect
+Sun_Mar_19_02:42:15_2017: Lock Screen
+Sun_Mar_19_02:42:15_2017: Unlock Screen
+Sun_Mar_19_02:42:15_2017: Display Screen1
+Sun_Mar_19_02:42:15_2017: Display Screen2
+Sun_Mar_19_02:42:15_2017: Display Screen3
+Sun_Mar_19_02:42:15_2017: Display Screen4
+Sun_Mar_19_02:42:15_2017: Request Phase
+Sun_Mar_19_02:42:15_2017: Request Amplitude
+Sun_Mar_19_02:42:15_2017: Request Current Mode
+Sun_Mar_19_02:42:15_2017: Request PWM Period
+Sun_Mar_19_02:42:15_2017: Request nsamples
+Sun_Mar_19_02:42:15_2017: Request Output Voltage
+Sun_Mar_19_02:42:15_2017: Request Output Current
+Sun_Mar_19_02:42:15_2017: Request Real Power
+Sun_Mar_19_02:42:15_2017: Request Reactive Power
+Sun_Mar_19_02:42:15_2017: Request Frequency
+Sun_Mar_19_02:42:15_2017: Response: Phase
+Sun_Mar_19_02:42:15_2017: Response: Amplitude
+Sun_Mar_19_02:42:15_2017: Response: Current Mode
+Sun_Mar_19_02:42:15_2017: Response: PWM Period
+Sun_Mar_19_02:42:15_2017: Response: nsamples
+Sun_Mar_19_02:42:15_2017: Response: Output Voltage
+Sun_Mar_19_02:42:15_2017: Response: Output Current
+Sun_Mar_19_02:42:15_2017: Response: Real Power
+Sun_Mar_19_02:42:15_2017: Response: Reactive Power
+Sun_Mar_19_02:42:15_2017: Response: Frequency
+Sun_Mar_19_02:42:15_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 10365632
+    llink: 10365632
+Sun_Mar_19_02:42:15_2017: opened socket with file description: 3
+Sun_Mar_19_02:42:21_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Sun_Mar_19_02:42:21_2017: node ptr: 10365632
+Sun_Mar_19_02:42:21_2017: cleared old message list, see?
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 10365632
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: reading a file that is 870 bytes long
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 12892112
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 12892112
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 15351616
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15351616
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 15742496
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15742496
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 15320272
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15320272
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 15742544
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15742544
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: creating a new node: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: writing to msgptr: 15368128
+Sun_Mar_19_02:42:21_2017: <value>%lf</value>
+
+Sun_Mar_19_02:42:21_2017: building message component list... here it is now:
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: here are the message components that we are loading: 
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:21_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Phase
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Output Voltage
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Output Current
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Real Power
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Reactive Power
+Sun_Mar_19_02:42:21_2017: adding component to message: Request Frequency
+Sun_Mar_19_02:42:27_2017: preparing to send message to inverter: falwell
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:42:27_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:42:27_2017: exhausted message type list...
+Sun_Mar_19_02:42:27_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:42:27_2017: sendto() returns with value 66
+Sun_Mar_19_02:51:42_2017: data from item selected for removal: falwell 192.168.0.78 30:85:a9:2c:23:18
+Sun_Mar_19_02:51:42_2017: freed gtilist index 0
+Sun_Mar_19_02:51:42_2017: found inverter 0 at 192.168.0.78 using IP 192.168.0.78 and removed it from the list
+Sun_Mar_19_02:51:42_2017: attempting to remove static arp entry with command: arp -d 192.168.0.78 2>&1
+Sun_Mar_19_02:51:42_2017: SIOCDARP(dontpub): Operation not permitted
+
+Sun_Mar_19_02:52:19_2017: attempting to create static arp cache entry for inverter orkney (30:85:a9:2c:23:18), at 192.168.0.78
+Sun_Mar_19_02:52:19_2017: added inverter orkney (30:85:a9:2c:23:18) at 192.168.0.78 in index 0
+Sun_Mar_19_02:52:19_2017: SIOCSARP: Operation not permitted
+
+Sun_Mar_19_02:52:27_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:52:27_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:52:27_2017: exhausted message type list...
+Sun_Mar_19_02:52:27_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:52:27_2017: sendto() returns with value 66
+Sun_Mar_19_02:55:45_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:55:45_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:55:45_2017: exhausted message type list...
+Sun_Mar_19_02:55:45_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x03 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:55:45_2017: sendto() returns with value 66
+Sun_Mar_19_02:55:53_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:55:53_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:55:53_2017: exhausted message type list...
+Sun_Mar_19_02:55:53_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x04 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:55:53_2017: sendto() returns with value 66
+Sun_Mar_19_02:56:01_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 15368128
+    rlink: 15742544
+    llink: 10365632
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 15742544
+    rlink: 15320272
+    llink: 15368128
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 15320272
+    rlink: 15742496
+    llink: 15742544
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 15742496
+    rlink: 15351616
+    llink: 15320272
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 15351616
+    rlink: 12892112
+    llink: 15742496
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 12892112
+    rlink: 10365632
+    llink: 15351616
+Sun_Mar_19_02:56:01_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 10365632
+    rlink: 15368128
+    llink: 12892112
+Sun_Mar_19_02:56:01_2017: exhausted message type list...
+Sun_Mar_19_02:56:01_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x05 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_02:56:01_2017: sendto() returns with value 66
+Sun_Mar_19_03:02:49_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 25602464
+    rlink: 25602416
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 25602512
+    rlink: 25602464
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 25602560
+    rlink: 25602512
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 25602608
+    rlink: 25602560
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 25602656
+    rlink: 25602608
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: creating a new node: 
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 25602704
+    rlink: 25602656
+    llink: 25602416
+Sun_Mar_19_03:02:49_2017: Misdirected Message
+Sun_Mar_19_03:02:49_2017: Unimplemented Protocol
+Sun_Mar_19_03:02:49_2017: Unimplemented Function
+Sun_Mar_19_03:02:49_2017: GP_ACK
+Sun_Mar_19_03:02:49_2017: Inverter Waking Up
+Sun_Mar_19_03:02:49_2017: Set Phase
+Sun_Mar_19_03:02:49_2017: Set Amplitude
+Sun_Mar_19_03:02:49_2017: Set Real Power
+Sun_Mar_19_03:02:49_2017: Set Reactive Power
+Sun_Mar_19_03:02:49_2017: Set Frequency
+Sun_Mar_19_03:02:49_2017: Select Grid Following
+Sun_Mar_19_03:02:49_2017: Select Standalone
+Sun_Mar_19_03:02:49_2017: Disconnect
+Sun_Mar_19_03:02:49_2017: Connect
+Sun_Mar_19_03:02:49_2017: Lock Screen
+Sun_Mar_19_03:02:49_2017: Unlock Screen
+Sun_Mar_19_03:02:49_2017: Display Screen1
+Sun_Mar_19_03:02:49_2017: Display Screen2
+Sun_Mar_19_03:02:49_2017: Display Screen3
+Sun_Mar_19_03:02:49_2017: Display Screen4
+Sun_Mar_19_03:02:49_2017: Request Phase
+Sun_Mar_19_03:02:49_2017: Request Amplitude
+Sun_Mar_19_03:02:49_2017: Request Current Mode
+Sun_Mar_19_03:02:49_2017: Request PWM Period
+Sun_Mar_19_03:02:49_2017: Request nsamples
+Sun_Mar_19_03:02:49_2017: Request Output Voltage
+Sun_Mar_19_03:02:49_2017: Request Output Current
+Sun_Mar_19_03:02:49_2017: Request Real Power
+Sun_Mar_19_03:02:49_2017: Request Reactive Power
+Sun_Mar_19_03:02:49_2017: Request Frequency
+Sun_Mar_19_03:02:49_2017: Response: Phase
+Sun_Mar_19_03:02:49_2017: Response: Amplitude
+Sun_Mar_19_03:02:49_2017: Response: Current Mode
+Sun_Mar_19_03:02:49_2017: Response: PWM Period
+Sun_Mar_19_03:02:49_2017: Response: nsamples
+Sun_Mar_19_03:02:49_2017: Response: Output Voltage
+Sun_Mar_19_03:02:49_2017: Response: Output Current
+Sun_Mar_19_03:02:49_2017: Response: Real Power
+Sun_Mar_19_03:02:49_2017: Response: Reactive Power
+Sun_Mar_19_03:02:49_2017: Response: Frequency
+Sun_Mar_19_03:02:49_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 25602752
+    llink: 25602752
+Sun_Mar_19_03:02:49_2017: opened socket with file description: 3
+Sun_Mar_19_03:02:58_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Sun_Mar_19_03:02:58_2017: node ptr: 25602752
+Sun_Mar_19_03:02:58_2017: cleared old message list, see?
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 25602752
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: reading a file that is 870 bytes long
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 30778160
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30778160
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 30983952
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30983952
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 31092864
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 31092864
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 31098544
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 31098544
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 30492800
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30492800
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: creating a new node: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 0
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: writing to msgptr: 30488288
+Sun_Mar_19_03:02:58_2017: <value>%lf</value>
+
+Sun_Mar_19_03:02:58_2017: building message component list... here it is now:
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: here are the message components that we are loading: 
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:02:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Phase
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Output Voltage
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Output Current
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Real Power
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Reactive Power
+Sun_Mar_19_03:02:58_2017: adding component to message: Request Frequency
+Sun_Mar_19_03:03:03_2017: data from item selected for removal: falwell 192.168.0.78 30:85:a9:2c:23:18
+Sun_Mar_19_03:03:03_2017: freed gtilist index 0
+Sun_Mar_19_03:03:03_2017: found inverter 0 at 192.168.0.78 using IP 192.168.0.78 and removed it from the list
+Sun_Mar_19_03:03:03_2017: attempting to remove static arp entry with command: arp -d 192.168.0.78 2>&1
+Sun_Mar_19_03:03:03_2017: SIOCDARP(dontpub): Operation not permitted
+
+Sun_Mar_19_03:03:42_2017: attempting to create static arp cache entry for inverter orkney (30:85:a9:2c:23:18), at 192.168.0.78
+Sun_Mar_19_03:03:42_2017: added inverter orkney (30:85:a9:2c:23:18) at 192.168.0.78 in index 0
+Sun_Mar_19_03:03:42_2017: SIOCSARP: Operation not permitted
+
+Sun_Mar_19_03:03:52_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:03:52_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:03:52_2017: exhausted message type list...
+Sun_Mar_19_03:03:52_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_03:03:52_2017: sendto() returns with value 66
+Sun_Mar_19_03:04:00_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:04:00_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:04:00_2017: exhausted message type list...
+Sun_Mar_19_03:04:00_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_03:04:00_2017: sendto() returns with value 66
+Sun_Mar_19_03:05:07_2017: data from item selected for removal: orkney 192.168.0.78 30:85:a9:2c:23:18
+Sun_Mar_19_03:05:07_2017: freed gtilist index 0
+Sun_Mar_19_03:05:07_2017: found inverter 0 at 192.168.0.78 using IP 192.168.0.78 and removed it from the list
+Sun_Mar_19_03:05:07_2017: attempting to remove static arp entry with command: arp -d 192.168.0.78 2>&1
+Sun_Mar_19_03:05:07_2017: SIOCDARP(dontpub): Operation not permitted
+
+Sun_Mar_19_03:05:18_2017: attempting to create static arp cache entry for inverter orkney (30:85:a9:2c:23:18), at 127.0.0.1
+Sun_Mar_19_03:05:18_2017: added inverter orkney (30:85:a9:2c:23:18) at 127.0.0.1 in index 1
+Sun_Mar_19_03:05:18_2017: SIOCSARP: Operation not permitted
+
+Sun_Mar_19_03:05:32_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:05:32_2017: exhausted message type list...
+Sun_Mar_19_03:05:32_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x03 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_03:05:32_2017: sendto() returns with value 66
+Sun_Mar_19_03:05:32_2017: preparing to send message to inverter: orkney
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 30488288
+    rlink: 30492800
+    llink: 25602752
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 30492800
+    rlink: 31098544
+    llink: 30488288
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 31098544
+    rlink: 31092864
+    llink: 30492800
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 31092864
+    rlink: 30983952
+    llink: 31098544
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 30983952
+    rlink: 30778160
+    llink: 31092864
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 30778160
+    rlink: 25602752
+    llink: 30983952
+Sun_Mar_19_03:05:32_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 25602752
+    rlink: 30488288
+    llink: 30778160
+Sun_Mar_19_03:05:32_2017: exhausted message type list...
+Sun_Mar_19_03:05:32_2017: sendbuffer as hex string: 0xa3 0xcf 0x01 0x06 0000 0x04 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 
+Sun_Mar_19_03:05:32_2017: sendto() returns with value 66
