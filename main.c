@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <gtk.h>
 #include <sys/socket.h>
@@ -10,6 +9,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+//#include <fcntl-linux.h>
 
 #include "gpdefs.h"
 #include "gtihmi.h"
@@ -150,7 +150,7 @@ int addnewinverter(GtkWidget *widget, gpointer data);
 int removeinverter(GtkWidget *wdiget, gpointer data);
 int getindexfromip(char* ipaddr);
 int sendoneoff(GtkWidget *widget, gpointer data);
-int sendregularcollectionmessage(void);
+gboolean sendregularcollectionmessage(void);
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data);
 int saveconfigtofile(void);
 int loadconfigfromfile(void);
@@ -498,7 +498,7 @@ int opensocket(void)
 
 
     socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
+    //setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
     setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
 
     if(socket_desc == -1)
@@ -514,7 +514,7 @@ int opensocket(void)
     //make socket asynchronous
     fcntl(socket_desc,F_SETFL,O_ASYNC);
     //set this process as the owning process which will get SIGIO notifications when the socket is ready
-    //fcntl(socket_desc,F_SETOWN,getpid());
+    fcntl(socket_desc,8,getpid()); //F_SETOWN should be defined to 8
     //designate a handler for the SIGIO signal
     sigaction(SIGIO, &sa, NULL);
 
@@ -599,17 +599,29 @@ int stopcollection(void)
     return 0;
 }
 
-int sendregularcollectionmessage(void)
+gboolean sendregularcollectionmessage(void)
 {
     int i;
+    int retval;
 
 
     for(i = 0; i < MAX_N_INVERTERS; i++)
     {
-        sendmessagetoinverter(i,schedmsgperm);
+        if(gtilist[i].extant == 1)
+        {
+            retval = sendmessagetoinverter(i,schedmsgperm);
+        }
     }
 
-    return 0;
+    //logwriteln(debugfilename,"what time is it?");
+    if(retval >= 0)
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
 }
 
 int sendmessagetoinverter(int index, chosenmsg* compptr)
@@ -618,7 +630,6 @@ int sendmessagetoinverter(int index, chosenmsg* compptr)
     unsigned char count = 0;
     int keepgoing = 1;
     int retval = 1;
-    struct sockaddr_in server;
     char sendbuffer[1024];
     chosenmsg *currentptr;
     int payloadsize;
@@ -711,6 +722,7 @@ void checkrecbuffer(int signal)
     char recbuffer[1024];
     int datapresent;
     int i;
+    int slen;
 
     memset(recbuffer,0, 1024);
 
@@ -719,10 +731,13 @@ void checkrecbuffer(int signal)
     {
         if(gtilist[i].extant == 1)
         {
-            datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[i].server,sizeof(gtilist[i].server));
+            slen = sizeof(gtilist[i].server);
+            datapresent = recvfrom(socket_desc,recbuffer, 1024, MSG_DONTWAIT,(struct sockaddr *)&gtilist[i].server,&slen);
             if(datapresent == -1)
             {
                 sprintf(debugbuffer,"no data from inverter %d", i);
+                logwriteln(debugfilename,debugbuffer);
+                sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
                 logwriteln(debugfilename,debugbuffer);
             }
             else
@@ -735,12 +750,6 @@ void checkrecbuffer(int signal)
             }
         }
     }
-
-
-
-
-
-
 }
 
 int disassemblepacket(unsigned char *buffer, int index)

@@ -13,7 +13,7 @@
 #define MAX_NAME_LENGTH             48
 #define MAX_MSG_COMP                5
 
-#define DATA_COLLECTION_INTERVAL    200 //in ms
+#define DATA_COLLECTION_INTERVAL    1000 //in ms
 
 typedef struct chosenmsg_t{
     int data;
