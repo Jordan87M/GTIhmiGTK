@@ -33,6 +33,7 @@ typedef struct GTIinfo_t{
     chosenmsg *msgtypelistperm;
     chosenmsg *reclistperm;
     struct sockaddr_in server;
+    GtkTreeIter *inviter;
 
 } GTIinfo;
 

@@ -232,8 +232,8 @@ static void activate(GtkApplication* app, gpointer user_data)
     int sigview_height = sigbox_height;
     int sigview_width = 240;
     int std_but_width = 80;
-    int std_but_height = 10;
-    int std_but_space_y = 10;
+    int std_but_height = 30;
+    int std_but_space_y = 5;
     int std_but_space_x = 10;
     int sm_but_width = 20;
     int sm_but_height = 10;
@@ -248,13 +248,13 @@ static void activate(GtkApplication* app, gpointer user_data)
     int chosen_bot_ypos = chosen_top_ypos + std_but_height + 2*std_but_space_y;
     int active_view_ypos = sig_row_y + sigbox_height + 20;
     int remove_but_xpos = horz_dim - std_but_width - horz_marg;
-    int remove_but_ypos = active_view_ypos - std_but_height - 20;
+    int remove_but_ypos = active_view_ypos - std_but_height - std_but_space_y;
     int send_but_xpos = chosen_box_xpos + sigview_width + sigbox_space;
-    int send_but_ypos = remove_but_ypos;
+    int send_but_ypos = remove_but_ypos - std_but_height - std_but_space_y;
     int start_but_xpos = send_but_xpos + std_but_width + std_but_space_x;
-    int start_but_ypos = remove_but_ypos;
+    int start_but_ypos = send_but_ypos;
     int stop_but_xpos = start_but_xpos + std_but_width + std_but_space_x;
-    int stop_but_ypos = remove_but_ypos;
+    int stop_but_ypos = send_but_ypos;
     int recscroll_ypos = sig_row_y;
     int recscroll_xpos = send_but_xpos;
     int recscroll_width = horz_dim - horz_marg - recscroll_xpos;
@@ -433,27 +433,27 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_size_request(stopcollectionbutton, std_but_width, std_but_height);
     g_signal_connect(stopcollectionbutton, "clicked", G_CALLBACK(stopcollection),NULL);
 
-    store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_DOUBLE);
-    //store = gtk_list_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE);
+    //store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_DOUBLE);
+    store = gtk_list_store_new(9, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE);
     activetree = gtk_tree_view_new();
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_NAME, "Name", renderer,"text",0,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 0, "Name", renderer, "text", COL_NAME, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_IPADDR, "IP Address", renderer,"text",1,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 1, "IP Address", renderer, "text", COL_IPADDR, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_MACADDR, "MAC Address", renderer,"text",2,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 2, "MAC Address", renderer,"text", COL_MACADDR, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_PHASE, "Phase Offset", renderer,"text",3,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 3, "Phase Offset", renderer,"text", COL_PHASE, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_VRMS, "Voltage", renderer,"text",4,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 4, "Voltage", renderer, "text", COL_VRMS, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_IRMS, "Current", renderer,"text",5,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 5, "Current", renderer, "text", COL_IRMS, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_POWREAL, "Real Power", renderer,"text",6,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 6, "Real Power", renderer, "text", COL_POWREAL, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_POWREAC, "Reactive Power", renderer,"text",7,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 7, "Reactive Power", renderer,"text", COL_POWREAC, NULL);
     renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), COL_FREQ, "Frequency", renderer,"text",8,NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(activetree), 8, "Frequency", renderer,"text", COL_FREQ, NULL);
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
 
@@ -462,23 +462,23 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     sigstore = gtk_list_store_new(3,G_TYPE_INT,G_TYPE_STRING,G_TYPE_DOUBLE);
     sigrenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_INDEX,"Index",sigrenderer,"text",0);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),0,"Index",sigrenderer,"text",COL_INDEX,NULL);
     sigrenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_SIGNAME,"Name",sigrenderer,"text",1);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),1,"Name",sigrenderer,"text",COL_SIGNAME,NULL);
     sigrenderer = gtk_cell_renderer_text_new();
     g_object_set(sigrenderer,"editable",TRUE,NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),COL_VALUE,"Value",sigrenderer,"text",2);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(chosensignaltreeview),2,"Value",sigrenderer,"text",COL_VALUE,NULL);
     g_signal_connect(sigrenderer,"edited",value_edited_callback, NULL);
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(chosensignaltreeview),sigmodel);
 
     recstore = gtk_list_store_new(3,G_TYPE_STRING,G_TYPE_STRING,G_TYPE_DOUBLE);
     recrenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECNAME,"Name",recrenderer,"text",0);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),0,"Name",recrenderer,"text",COL_RECNAME,NULL);
     recrenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECCODE,"Type",recrenderer,"text",1);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),1,"Type",recrenderer,"text",COL_RECCODE, NULL);
     recrenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),COL_RECVALUE,"Value",recrenderer,"text",2);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),2,"Value",recrenderer,"text",COL_RECVALUE, NULL);
 
     gtk_widget_show_all(window);
 
@@ -583,11 +583,9 @@ int sendoneoff(GtkWidget *widget, gpointer data)
 
 int startcollection(void)
 {
-
     logwriteln(debugfilename,"starting regular data collection");
 
     timersource = g_timeout_add(DATA_COLLECTION_INTERVAL, sendregularcollectionmessage, NULL);
-
 
     return 0;
 }
@@ -603,6 +601,14 @@ gboolean sendregularcollectionmessage(void)
 {
     int i;
     int retval;
+    double phase;
+    double powreal;
+    double powreac;
+    double freq;
+    double vrms;
+    double irms;
+    char fnbuffer[64];
+    FILE *fp;
 
 
     for(i = 0; i < MAX_N_INVERTERS; i++)
@@ -610,18 +616,58 @@ gboolean sendregularcollectionmessage(void)
         if(gtilist[i].extant == 1)
         {
             retval = sendmessagetoinverter(i,schedmsgperm);
+            if(retval >= 0)
+            {
+               chosenmsg *current = gtilist[i].reclistperm;
+
+                do{
+                    current = moveright(current);
+                    if(signallist[current->data].code == RESPONSE_PHASE_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
+                        phase = current->value;
+                    }
+                    else if(signallist[current->data].code == RESPONSE_REACTIVE_POWER_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAC,current->value,-1);
+                        powreac = current->value;
+                    }
+                    else if(signallist[current->data].code == RESPONSE_REAL_POWER_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAL,current->value,-1);
+                        powreal = current-> value;
+                    }
+                    else if(signallist[current->data].code == RESPONSE_FREQUENCY_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_FREQ,current->value,-1);
+                        freq = current->value;
+                    }
+                    else if(signallist[current->data].code == RESPONSE_OUTPUT_CURRENT_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_IRMS,current->value,-1);
+                        irms = current->value;
+                    }
+                    else if(signallist[current->data].code == RESPONSE_OUTPUT_VOLTAGE_CODE)
+                    {
+                        gtk_list_store_set(store,gtilist[i].inviter,COL_VRMS,current->value,-1);
+                        vrms = current->value;
+                    }
+                }while(current != gtilist[i].reclistperm);
+
+                model = GTK_TREE_MODEL(store);
+                gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+                gtk_widget_show_all(window);
+
+                //sprintf(fnbuffer,"inv%dlog",i);
+                //fp = fopen(fnbuffer,"a");
+                //fprintf(fp,"%f,%f,%f,%f,%f,%f\n",phase,vrms,irms,powreal,powreac,freq);
+                //fclose(fp);
+            }
         }
     }
 
     //logwriteln(debugfilename,"what time is it?");
-    if(retval >= 0)
-    {
-        return TRUE;
-    }
-    else
-    {
-        return FALSE;
-    }
+    return TRUE;
 }
 
 int sendmessagetoinverter(int index, chosenmsg* compptr)
@@ -661,7 +707,7 @@ int sendmessagetoinverter(int index, chosenmsg* compptr)
     currentptr = moveright(chosenperm);
     while(keepgoing == 1)
     {
-        debugprintnodeinfo(currentptr);
+        //debugprintnodeinfo(currentptr);
         if(currentptr->data == -1)
         {
             logwriteln(debugfilename,"exhausted message type list...");
@@ -744,7 +790,7 @@ void checkrecbuffer(int signal)
             {
                 sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, i);
                 logwriteln(debugfilename,debugbuffer);
-                logwriteln(debugfilename,recbuffer);
+                debugprinthex(recbuffer, datapresent);
 
                 disassemblepacket(recbuffer, i);
             }
@@ -972,6 +1018,8 @@ int addnewinverter(GtkWidget *widget, gpointer data)
             gtk_list_store_set(store, &iter, COL_NAME, name, COL_IPADDR, ipaddr, COL_MACADDR, macaddr,-1);
             model = GTK_TREE_MODEL(store);
             gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+            //save handle for data display
+            gtilist[i].inviter = &iter;
 
             gtk_widget_show_all(window);
 
@@ -1163,6 +1211,11 @@ int getselectedactive(void)
     GList *activesellist;
      //find out which inverter, if any, has been selected
     activesel = gtk_tree_view_get_selection(activetree);
+    if(activesel == NULL)
+    {
+        return -1;
+    }
+
     activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
     gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
 
@@ -1264,6 +1317,7 @@ int makeinverterlistfromstruct(GTIinfo *gtilist)
         {
             gtk_list_store_append(store, &iter);
             gtk_list_store_set(store, &iter, COL_NAME, gtilist[i].name, COL_IPADDR, gtilist[i].ipaddr, COL_MACADDR, gtilist[i].macaddr,-1);
+            gtilist[i].inviter = &iter;
         }
     }
     model = GTK_TREE_MODEL(store);

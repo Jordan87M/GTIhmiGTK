@@ -24,6 +24,34 @@ int logwriteln(char *filename, const char *line)
     return retval;
 }
 
+int datawriteln(char *filename, const char *line)
+{
+    FILE *fp;
+    fp = fopen(filename,"a");
+    int retval;
+
+    retval = fprintf(fp, "\n%s",line);
+    fclose(fp);
+
+    return retval;
+}
+
+int timestampfilename(char *tbuffer)
+{
+    time_t now;
+    struct tm *timeinfo;
+    char timebuff[64];
+    int retval;
+
+    time(&now);
+    timeinfo = localtime(&now);
+    retval = snprintf(timebuff, 64, "%s",asctime(timeinfo));
+    replaceandclean(timebuff,' ','_');
+    replaceandclean(timebuff,':','-');
+
+    return retval;
+}
+
 
 int logprintfstring(char *format, char *string)
 {
@@ -76,7 +104,6 @@ int debugprinthex(unsigned char *hexstring, int numbytes)
 {
     int i;
     char outbuffer[512];
-    sprintf(debugbuffer, "sendbuffer as hex string: ");
     for(i = 0; i < numbytes; i++)
     {
         sprintf(outbuffer, "%#04x ", hexstring[i]);

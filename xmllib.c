@@ -387,8 +387,8 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 if(retval != NULL)
                 {
                     fprintf(fpdebug,"\nclosing a message component");
-                    logwriteln(debugfilename,"building message component list... here it is now:");
-                    traverseright(currentmsgptr,debugprintnodeinfo);
+                    //logwriteln(debugfilename,"building message component list... here it is now:");
+                    //traverseright(currentmsgptr,debugprintnodeinfo);
                     status->readingamessagecomp = 0;
                     return 0;
                 }

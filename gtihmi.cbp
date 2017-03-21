@@ -15,6 +15,7 @@
 					<Add option="-g" />
 					<Add option="`pkg-config --cflags gtk+-3.0`" />
 					<Add option="-std=c99" />
+					<Add option="-D_POSIX_C_SOURCE" />
 					<Add directory="/usr/include/gtk-3.0" />
 					<Add directory="/usr/include/gtk-3.0/gtk" />
 					<Add directory="/usr/include/glib-2.0" />
