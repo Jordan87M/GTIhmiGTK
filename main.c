@@ -1,3 +1,5 @@
+
+#include <time.h>
 #include <stdio.h>
 #include <gtk.h>
 #include <sys/socket.h>
@@ -9,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+
 //#include <fcntl-linux.h>
 
 #include "gpdefs.h"
@@ -110,8 +113,8 @@ gpheader globalhead = {.magic = GP_MAGIC,
                         .seqnum = INITIAL_SEQNUM,
                         .context = INVERTER_CONTEXT
                         };
-guint timersource;
-
+//guint timersource;
+timer_t schedtimer;
 
 
 int inverterinsertindex = 0;
@@ -150,7 +153,8 @@ int addnewinverter(GtkWidget *widget, gpointer data);
 int removeinverter(GtkWidget *wdiget, gpointer data);
 int getindexfromip(char* ipaddr);
 int sendoneoff(GtkWidget *widget, gpointer data);
-gboolean sendregularcollectionmessage(void);
+//gboolean sendregularcollectionmessage(void);
+void sendregularcollectionmessage(int sig);
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data);
 int saveconfigtofile(void);
 int loadconfigfromfile(void);
@@ -583,21 +587,59 @@ int sendoneoff(GtkWidget *widget, gpointer data)
 
 int startcollection(void)
 {
+    struct sigevent sevp;
+
+    struct sigaction sa;
+    struct itimerspec new_value;
+
+    sa.sa_handler = sendregularcollectionmessage;
+
+    new_value.it_interval.tv_nsec = 500000000;
+    time_t sec = (time_t) 0;
+    new_value.it_interval.tv_sec = sec;
+    new_value.it_value.tv_nsec = 500000000;
+    new_value.it_value.tv_sec = sec;
+
+    sevp.sigev_notify = 0;         //SIGEV_SIGNAL defined to 0 in siginfo.h
+    sevp.sigev_signo = SIGRTMIN;
+
     logwriteln(debugfilename,"starting regular data collection");
 
-    timersource = g_timeout_add(DATA_COLLECTION_INTERVAL, sendregularcollectionmessage, NULL);
+    //timersource = g_timeout_add(DATA_COLLECTION_INTERVAL, sendregularcollectionmessage, NULL);
+
+    //see if using POSIX timers helps
+    timer_create(1, &sevp, &schedtimer);    //CLOCK_MONOTONIC defined to 1 in uapi/linux/time.h
+    timer_settime(schedtimer,0,&new_value,NULL);
+    //designate handler for SIGEV
+    sigaction(SIGRTMIN,&sa,NULL);
+
+    sprintf(debugbuffer,"signal number: %d",SIGRTMIN);
+    logwriteln(debugfilename,debugbuffer);
 
     return 0;
 }
 
 int stopcollection(void)
 {
-    g_source_remove(timersource);
+    //g_source_remove(timersource);
+    struct itimerspec disarm_value;
+
+    struct itimerspec curr_time;
+
+    timer_gettime(schedtimer, &curr_time);
+
+    sprintf(debugbuffer,"time left: %ds and %dns \nnumber of overruns: %d",curr_time.it_value.tv_sec, curr_time.it_value.tv_nsec, timer_getoverrun(schedtimer));
+    logwriteln(debugfilename,debugbuffer);
+
+    disarm_value.it_value.tv_nsec = 0;
+    disarm_value.it_value.tv_sec = 0;
+
+    timer_settime(schedtimer,0,&disarm_value,NULL);
     logwriteln(debugfilename,"stopping regular data collection");
     return 0;
 }
 
-gboolean sendregularcollectionmessage(void)
+void sendregularcollectionmessage(int sig)
 {
     int i;
     int retval;
@@ -610,7 +652,7 @@ gboolean sendregularcollectionmessage(void)
     char fnbuffer[64];
     FILE *fp;
 
-
+    logwriteln(debugfilename,"timer callback");
     for(i = 0; i < MAX_N_INVERTERS; i++)
     {
         if(gtilist[i].extant == 1)
@@ -667,7 +709,8 @@ gboolean sendregularcollectionmessage(void)
     }
 
     //logwriteln(debugfilename,"what time is it?");
-    return TRUE;
+    //return TRUE;
+    return;
 }
 
 int sendmessagetoinverter(int index, chosenmsg* compptr)
