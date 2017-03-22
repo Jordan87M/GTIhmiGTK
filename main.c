@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 
 //#include <fcntl-linux.h>
 
@@ -115,6 +116,7 @@ gpheader globalhead = {.magic = GP_MAGIC,
                         };
 //guint timersource;
 timer_t schedtimer;
+pthread_t listenerthread;
 
 
 int inverterinsertindex = 0;
@@ -154,13 +156,16 @@ int removeinverter(GtkWidget *wdiget, gpointer data);
 int getindexfromip(char* ipaddr);
 int sendoneoff(GtkWidget *widget, gpointer data);
 //gboolean sendregularcollectionmessage(void);
-void sendregularcollectionmessage(int sig);
+void sendregularcollectionmessage(void);
+void checkrecbufferspawner(int sig);
+void sendregularcollectionmessagespawner(int sig);
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data);
 int saveconfigtofile(void);
 int loadconfigfromfile(void);
 int startcollection(void);
 int stopcollection(void);
 void checkrecbuffer(int);
+void disassemblepacket(unsigned char *buffer, int index);
 
 int main(int argc, char *argv[])
 {
@@ -217,6 +222,8 @@ int main(int argc, char *argv[])
     logwriteln(debugfilename,debugbuffer);
 
     logwriteln(debugfilename,"bye!");
+
+    pthread_exit(NULL);
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -497,7 +504,7 @@ int opensocket(void)
 
 
     struct sigaction sa;
-    sa.sa_handler = checkrecbuffer;
+    sa.sa_handler = checkrecbufferspawner;
     //sigaction.(*sa_sigaction)(int) = NULL:
 
 
@@ -592,7 +599,7 @@ int startcollection(void)
     struct sigaction sa;
     struct itimerspec new_value;
 
-    sa.sa_handler = sendregularcollectionmessage;
+    sa.sa_handler = sendregularcollectionmessagespawner;
 
     new_value.it_interval.tv_nsec = 500000000;
     time_t sec = (time_t) 0;
@@ -639,7 +646,23 @@ int stopcollection(void)
     return 0;
 }
 
-void sendregularcollectionmessage(int sig)
+void sendregularcollectionmessagespawner(int sig)
+{
+    pthread_t newthread;
+    pthread_create(&newthread,NULL,sendregularcollectionmessage,NULL);
+
+    return;
+}
+
+void checkrecbufferspawner(int sig)
+{
+    pthread_t newthread;
+    pthread_create(&newthread,NULL,checkrecbuffer,NULL);
+
+    return;
+}
+
+void sendregularcollectionmessage(void)
 {
     int i;
     int retval;
@@ -710,7 +733,7 @@ void sendregularcollectionmessage(int sig)
 
     //logwriteln(debugfilename,"what time is it?");
     //return TRUE;
-    return;
+    pthread_exit(NULL);
 }
 
 int sendmessagetoinverter(int index, chosenmsg* compptr)
@@ -841,7 +864,7 @@ void checkrecbuffer(int signal)
     }
 }
 
-int disassemblepacket(unsigned char *buffer, int index)
+void disassemblepacket(unsigned char *buffer, int index)
 {
     unsigned short int magic;
     unsigned char ncomps;
@@ -878,7 +901,7 @@ int disassemblepacket(unsigned char *buffer, int index)
 
     }
 
-    return 0;
+    pthread_exit(NULL);
 }
 
 int updaterectreeview(void)

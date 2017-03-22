@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1490132024 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
+1490213387 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
 	<time.h>
 	<stdio.h>
 	<gtk.h>
@@ -12,6 +12,7 @@
 	<errno.h>
 	<string.h>
 	<unistd.h>
+	<pthread.h>
 	"gpdefs.h"
 	"gtihmi.h"
 	"logconf.h"
