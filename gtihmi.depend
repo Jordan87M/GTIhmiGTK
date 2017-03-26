@@ -1,17 +1,19 @@
 # depslib dependency file v1.0
-1490213387 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
+1490368454 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
 	<time.h>
 	<stdio.h>
 	<gtk.h>
+	<unistd.h>
 	<sys/socket.h>
 	<netinet/in.h>
 	<arpa/inet.h>
 	<sys/time.h>
+	<sys/types.h>
+	<sys/syscall.h>
 	<signal.h>
 	<fcntl.h>
 	<errno.h>
 	<string.h>
-	<unistd.h>
 	<pthread.h>
 	"gpdefs.h"
 	"gtihmi.h"

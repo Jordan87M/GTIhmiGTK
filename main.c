@@ -2,15 +2,17 @@
 #include <time.h>
 #include <stdio.h>
 #include <gtk.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
-#include <unistd.h>
 #include <pthread.h>
 
 //#include <fcntl-linux.h>
@@ -18,6 +20,8 @@
 #include "gpdefs.h"
 #include "gtihmi.h"
 #include "logconf.h"
+
+
 
 
 //global gui pointers
@@ -108,6 +112,9 @@ GTIinfo gtilist[MAX_N_INVERTERS];
 int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 int socket_desc;
+int timersetupflag = 0;
+int timerteardownflag = 0;
+int socketsetupflag = 0;
 chosenmsg *chosenperm;
 chosenmsg *schedmsgperm;
 gpheader globalhead = {.magic = GP_MAGIC,
@@ -117,6 +124,7 @@ gpheader globalhead = {.magic = GP_MAGIC,
 //guint timersource;
 timer_t schedtimer;
 pthread_t listenerthread;
+
 
 
 int inverterinsertindex = 0;
@@ -166,6 +174,8 @@ int startcollection(void);
 int stopcollection(void);
 void checkrecbuffer(int);
 void disassemblepacket(unsigned char *buffer, int index);
+void listenerthreadroutine(void);
+gboolean displayupdate(gpointer nothing);
 
 int main(int argc, char *argv[])
 {
@@ -203,6 +213,11 @@ int main(int argc, char *argv[])
         gtilist[i].msgtypelistperm = createnewchosendllist();
     }
 
+    //spawn thread to listen to signals -- must be done before opensocket()
+    logwriteln(debugfilename,"about to launch listener thread");
+    pthread_create(&listenerthread,NULL,listenerthreadroutine, NULL);
+
+    sleep(1);
     //open socket
     opensocket();
     //debugprintnodedata(chosenperm);
@@ -223,7 +238,8 @@ int main(int argc, char *argv[])
 
     logwriteln(debugfilename,"bye!");
 
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
+    return;
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -491,8 +507,203 @@ static void activate(GtkApplication* app, gpointer user_data)
     recrenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),2,"Value",recrenderer,"text",COL_RECVALUE, NULL);
 
+    gdk_threads_add_idle(displayupdate,NULL);
+
     gtk_widget_show_all(window);
 
+}
+
+gboolean displayupdate(gpointer nothing)
+{
+    int i;
+    double phase;
+    double powreal;
+    double powreac;
+    double freq;
+    double vrms;
+    double irms;
+    //update one off message display from list
+    gtk_list_store_clear(recstore);
+
+
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+            chosenmsg *current = gtilist[i].reclistperm;
+            do{
+                current = moveright(current);
+                if(current->data != -1)
+                {
+                    gtk_list_store_append(recstore,&reciter);
+                    gtk_list_store_set(recstore,&reciter,COL_RECNAME, gtilist[i].name, COL_RECCODE, signallist[current->data].name, COL_RECVALUE, current->value, -1);
+                    recmodel = GTK_TREE_MODEL(recstore);
+                    gtk_tree_view_set_model(GTK_TREE_VIEW(rectreeview),recmodel);
+
+                    gtk_widget_show_all(rectreeview);
+                }
+            }while(current != gtilist[i].reclistperm);
+        }
+    }
+
+
+    //update scheduled message values
+    for(i = 0; i < MAX_N_INVERTERS; i++)
+    {
+        if(gtilist[i].extant == 1)
+        {
+
+           chosenmsg *current = gtilist[i].reclistperm;
+
+            do{
+                current = moveright(current);
+                if(signallist[current->data].code == RESPONSE_PHASE_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
+                    phase = current->value;
+                }
+                else if(signallist[current->data].code == RESPONSE_REACTIVE_POWER_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAC,current->value,-1);
+                    powreac = current->value;
+                }
+                else if(signallist[current->data].code == RESPONSE_REAL_POWER_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAL,current->value,-1);
+                    powreal = current-> value;
+                }
+                else if(signallist[current->data].code == RESPONSE_FREQUENCY_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_FREQ,current->value,-1);
+                    freq = current->value;
+                }
+                else if(signallist[current->data].code == RESPONSE_OUTPUT_CURRENT_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_IRMS,current->value,-1);
+                    irms = current->value;
+                }
+                else if(signallist[current->data].code == RESPONSE_OUTPUT_VOLTAGE_CODE)
+                {
+                    gtk_list_store_set(store,gtilist[i].inviter,COL_VRMS,current->value,-1);
+                    vrms = current->value;
+                }
+            }while(current != gtilist[i].reclistperm);
+
+            model = GTK_TREE_MODEL(store);
+            gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
+            gtk_widget_show_all(window);
+
+            //sprintf(fnbuffer,"inv%dlog",i);
+            //fp = fopen(fnbuffer,"a");
+            //fprintf(fp,"%f,%f,%f,%f,%f,%f\n",phase,vrms,irms,powreal,powreac,freq);
+            //fclose(fp);
+        }
+    }
+
+
+    return TRUE;
+}
+
+void listenerthreadroutine(void)
+{
+    sprintf(debugbuffer,"listener thread running with id %d",(unsigned int) listenerthread);
+    logwriteln(debugfilename,debugbuffer);
+    //just wait for signals
+    while(1)
+    {
+        if(timersetupflag == 1)
+        {
+            struct sigevent sevp;
+            struct sigaction sa;
+            struct itimerspec new_value;
+
+            sa.sa_handler = sendregularcollectionmessagespawner;
+            sa.sa_flags =
+
+            new_value.it_interval.tv_nsec = 500000000;
+            time_t sec = (time_t) 0;
+            new_value.it_interval.tv_sec = sec;
+            new_value.it_value.tv_nsec = 500000000;
+            new_value.it_value.tv_sec = sec;
+
+            #ifdef SYS_gettid
+            pid_t tid = syscall(SYS_gettid);
+            #else
+            #error "SYS_gettid unavailable on this system"
+            #endif
+
+            sevp.sigev_notify = 4;         //SIGEV_THREAD_ID defined to 4 SIGEV_SIGNAL defined to 0 in siginfo.h
+            sevp.sigev_signo = SIGRTMIN;
+            //sevp.sigev_value.sigev_notify_thread_id = listenerthread;
+            sevp._sigev_un._tid = tid;
+
+            //see if using POSIX timers helps
+            timer_create(1, &sevp, &schedtimer);    //CLOCK_MONOTONIC defined to 1 in uapi/linux/time.h
+
+            //designate handler for SIGEV
+            sigaction(SIGRTMIN,&sa,NULL);
+            timer_settime(schedtimer,0,&new_value,NULL);
+
+
+            timersetupflag = 0;
+        }
+
+        if(timerteardownflag == 1)
+        {
+
+            struct itimerspec disarm_value;
+
+            struct itimerspec curr_time;
+
+            timer_gettime(schedtimer, &curr_time);
+
+            sprintf(debugbuffer,"time left: %ds and %dns \nnumber of overruns: %d",curr_time.it_value.tv_sec, curr_time.it_value.tv_nsec, timer_getoverrun(schedtimer));
+            logwriteln(debugfilename,debugbuffer);
+
+            disarm_value.it_value.tv_nsec = 0;
+            disarm_value.it_value.tv_sec = 0;
+
+            timer_settime(schedtimer,0,&disarm_value,NULL);
+            logwriteln(debugfilename,"stopping regular data collection");
+
+
+            timerteardownflag = 0;
+        }
+
+        if(socketsetupflag == 1)
+        {
+            logwriteln(debugfilename,"socket created, setting up SIGIO callback");
+
+            struct f_owner_ex {
+                int type;
+                pid_t pid;
+            };
+
+            #ifdef SYS_gettid
+            pid_t tid = syscall(SYS_gettid);
+            #else
+            #error "SYS_gettid unavailable on this system"
+            #endif
+
+            struct f_owner_ex listenerowner;
+            listenerowner.type = 0;   //F_OWNER_TID is defined to 0 in asm-generic/fcntl.h
+            listenerowner.pid = tid;
+
+            struct sigaction sa;
+            sa.sa_handler = checkrecbufferspawner;
+
+            //make socket asynchronous
+            fcntl(socket_desc,F_SETFL,O_ASYNC);
+            //set this process as the owning process which will get SIGIO notifications when the socket is ready
+            //fcntl(socket_desc,8,getpid()); //F_SETOWN should be defined to 8
+            fcntl(socket_desc,15,&listenerowner); //F_SETOWN_EX should be defined to 15 in asm-generic/fcntl.h
+            //designate a handler for the SIGIO signal
+            sigaction(SIGIO, &sa, NULL);
+
+            socketsetupflag = 0;
+        }
+
+    }
 }
 
 int opensocket(void)
@@ -502,10 +713,6 @@ int opensocket(void)
     tv.tv_sec = 1;
     tv.tv_usec = 0;
 
-
-    struct sigaction sa;
-    sa.sa_handler = checkrecbufferspawner;
-    //sigaction.(*sa_sigaction)(int) = NULL:
 
 
     socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
@@ -521,13 +728,7 @@ int opensocket(void)
 
     sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
     logwriteln(debugfilename,debugbuffer);
-
-    //make socket asynchronous
-    fcntl(socket_desc,F_SETFL,O_ASYNC);
-    //set this process as the owning process which will get SIGIO notifications when the socket is ready
-    fcntl(socket_desc,8,getpid()); //F_SETOWN should be defined to 8
-    //designate a handler for the SIGIO signal
-    sigaction(SIGIO, &sa, NULL);
+    socketsetupflag = 1;
 
     return 0;
 }
@@ -587,62 +788,25 @@ int sendoneoff(GtkWidget *widget, gpointer data)
     }
     retval = sendmessagetoinverter(index, chosenperm);
 
-    updaterectreeview();
-
     return retval;
 }
 
 int startcollection(void)
 {
-    struct sigevent sevp;
-
-    struct sigaction sa;
-    struct itimerspec new_value;
-
-    sa.sa_handler = sendregularcollectionmessagespawner;
-
-    new_value.it_interval.tv_nsec = 500000000;
-    time_t sec = (time_t) 0;
-    new_value.it_interval.tv_sec = sec;
-    new_value.it_value.tv_nsec = 500000000;
-    new_value.it_value.tv_sec = sec;
-
-    sevp.sigev_notify = 0;         //SIGEV_SIGNAL defined to 0 in siginfo.h
-    sevp.sigev_signo = SIGRTMIN;
-
-    logwriteln(debugfilename,"starting regular data collection");
-
-    //timersource = g_timeout_add(DATA_COLLECTION_INTERVAL, sendregularcollectionmessage, NULL);
-
-    //see if using POSIX timers helps
-    timer_create(1, &sevp, &schedtimer);    //CLOCK_MONOTONIC defined to 1 in uapi/linux/time.h
-    timer_settime(schedtimer,0,&new_value,NULL);
-    //designate handler for SIGEV
-    sigaction(SIGRTMIN,&sa,NULL);
-
-    sprintf(debugbuffer,"signal number: %d",SIGRTMIN);
-    logwriteln(debugfilename,debugbuffer);
+    timerteardownflag = 0;
+    timersetupflag = 1;
 
     return 0;
 }
 
+
+
 int stopcollection(void)
 {
     //g_source_remove(timersource);
-    struct itimerspec disarm_value;
 
-    struct itimerspec curr_time;
-
-    timer_gettime(schedtimer, &curr_time);
-
-    sprintf(debugbuffer,"time left: %ds and %dns \nnumber of overruns: %d",curr_time.it_value.tv_sec, curr_time.it_value.tv_nsec, timer_getoverrun(schedtimer));
-    logwriteln(debugfilename,debugbuffer);
-
-    disarm_value.it_value.tv_nsec = 0;
-    disarm_value.it_value.tv_sec = 0;
-
-    timer_settime(schedtimer,0,&disarm_value,NULL);
-    logwriteln(debugfilename,"stopping regular data collection");
+    timersetupflag = 0;
+    timerteardownflag = 1;
     return 0;
 }
 
@@ -650,6 +814,8 @@ void sendregularcollectionmessagespawner(int sig)
 {
     pthread_t newthread;
     pthread_create(&newthread,NULL,sendregularcollectionmessage,NULL);
+    sprintf(debugbuffer,"send scheduled - new thread with id: %d",(unsigned int) newthread);
+    logwriteln(debugfilename,debugbuffer);
 
     return;
 }
@@ -658,6 +824,8 @@ void checkrecbufferspawner(int sig)
 {
     pthread_t newthread;
     pthread_create(&newthread,NULL,checkrecbuffer,NULL);
+    sprintf(debugbuffer,"check buffer - new thread with id: %d",(unsigned int) newthread);
+    logwriteln(debugfilename,debugbuffer);
 
     return;
 }
@@ -666,14 +834,8 @@ void sendregularcollectionmessage(void)
 {
     int i;
     int retval;
-    double phase;
-    double powreal;
-    double powreac;
-    double freq;
-    double vrms;
-    double irms;
-    char fnbuffer[64];
-    FILE *fp;
+
+
 
     logwriteln(debugfilename,"timer callback");
     for(i = 0; i < MAX_N_INVERTERS; i++)
@@ -681,58 +843,14 @@ void sendregularcollectionmessage(void)
         if(gtilist[i].extant == 1)
         {
             retval = sendmessagetoinverter(i,schedmsgperm);
-            if(retval >= 0)
-            {
-               chosenmsg *current = gtilist[i].reclistperm;
 
-                do{
-                    current = moveright(current);
-                    if(signallist[current->data].code == RESPONSE_PHASE_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
-                        phase = current->value;
-                    }
-                    else if(signallist[current->data].code == RESPONSE_REACTIVE_POWER_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAC,current->value,-1);
-                        powreac = current->value;
-                    }
-                    else if(signallist[current->data].code == RESPONSE_REAL_POWER_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_POWREAL,current->value,-1);
-                        powreal = current-> value;
-                    }
-                    else if(signallist[current->data].code == RESPONSE_FREQUENCY_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_FREQ,current->value,-1);
-                        freq = current->value;
-                    }
-                    else if(signallist[current->data].code == RESPONSE_OUTPUT_CURRENT_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_IRMS,current->value,-1);
-                        irms = current->value;
-                    }
-                    else if(signallist[current->data].code == RESPONSE_OUTPUT_VOLTAGE_CODE)
-                    {
-                        gtk_list_store_set(store,gtilist[i].inviter,COL_VRMS,current->value,-1);
-                        vrms = current->value;
-                    }
-                }while(current != gtilist[i].reclistperm);
-
-                model = GTK_TREE_MODEL(store);
-                gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
-                gtk_widget_show_all(window);
-
-                //sprintf(fnbuffer,"inv%dlog",i);
-                //fp = fopen(fnbuffer,"a");
-                //fprintf(fp,"%f,%f,%f,%f,%f,%f\n",phase,vrms,irms,powreal,powreac,freq);
-                //fclose(fp);
-            }
         }
     }
 
     //logwriteln(debugfilename,"what time is it?");
     //return TRUE;
+    sprintf(debugbuffer,"sent message - about to exit thread %d",(unsigned int) pthread_self());
+    logwriteln(debugfilename,debugbuffer);
     pthread_exit(NULL);
 }
 
@@ -901,41 +1019,11 @@ void disassemblepacket(unsigned char *buffer, int index)
 
     }
 
+    sprintf(debugbuffer,"processed message - about to exit thread %d",(unsigned int) pthread_self());
+    logwriteln(debugfilename, debugbuffer);
     pthread_exit(NULL);
 }
 
-int updaterectreeview(void)
-{
-    int i;
-
-    //first clear old treeview
-    gtk_list_store_clear(recstore);
-
-
-    for(i = 0; i < MAX_N_INVERTERS; i++)
-    {
-        if(gtilist[i].extant == 1)
-        {
-            chosenmsg *current = gtilist[i].reclistperm;
-            do{
-                current = moveright(current);
-                if(current->data != -1)
-                {
-                    gtk_list_store_append(recstore,&reciter);
-                    gtk_list_store_set(recstore,&reciter,COL_RECNAME, gtilist[i].name, COL_RECCODE, signallist[current->data].name, COL_RECVALUE, current->value, -1);
-                    recmodel = GTK_TREE_MODEL(recstore);
-                    gtk_tree_view_set_model(GTK_TREE_VIEW(rectreeview),recmodel);
-
-                    gtk_widget_show_all(rectreeview);
-                }
-            }while(current != gtilist[i].reclistperm);
-        }
-    }
-
-    //
-
-    return 0;
-}
 
 int choosesignalcallback(GtkWidget *widget, gpointer data)
 {

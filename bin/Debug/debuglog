@@ -52,3 +52,459 @@ Wed_Mar_15_13:28:23_2017: STARTNEW NODE
     llink: 11860560
 Wed_Mar_15_13:28:56_2017: GTK application finishes with retval: 0
 Wed_Mar_15_13:28:56_2017: bye!
+Fri_Mar_24_09:13:56_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: creating a new node: 
+Fri_Mar_24_09:13:56_2017: Misdirected Message
+Fri_Mar_24_09:13:56_2017: Unimplemented Protocol
+Fri_Mar_24_09:13:56_2017: Unimplemented Function
+Fri_Mar_24_09:13:56_2017: GP_ACK
+Fri_Mar_24_09:13:56_2017: Inverter Waking Up
+Fri_Mar_24_09:13:56_2017: Set Phase
+Fri_Mar_24_09:13:56_2017: Set Amplitude
+Fri_Mar_24_09:13:56_2017: Set Real Power
+Fri_Mar_24_09:13:56_2017: Set Reactive Power
+Fri_Mar_24_09:13:56_2017: Set Frequency
+Fri_Mar_24_09:13:56_2017: Select Grid Following
+Fri_Mar_24_09:13:56_2017: Select Standalone
+Fri_Mar_24_09:13:56_2017: Disconnect
+Fri_Mar_24_09:13:56_2017: Connect
+Fri_Mar_24_09:13:56_2017: Lock Screen
+Fri_Mar_24_09:13:56_2017: Unlock Screen
+Fri_Mar_24_09:13:56_2017: Display Screen1
+Fri_Mar_24_09:13:56_2017: Display Screen2
+Fri_Mar_24_09:13:56_2017: Display Screen3
+Fri_Mar_24_09:13:56_2017: Display Screen4
+Fri_Mar_24_09:13:56_2017: Request Phase
+Fri_Mar_24_09:13:56_2017: Request Amplitude
+Fri_Mar_24_09:13:56_2017: Request Current Mode
+Fri_Mar_24_09:13:56_2017: Request PWM Period
+Fri_Mar_24_09:13:56_2017: Request nsamples
+Fri_Mar_24_09:13:56_2017: Request Output Voltage
+Fri_Mar_24_09:13:56_2017: Request Output Current
+Fri_Mar_24_09:13:56_2017: Request Real Power
+Fri_Mar_24_09:13:56_2017: Request Reactive Power
+Fri_Mar_24_09:13:56_2017: Request Frequency
+Fri_Mar_24_09:13:56_2017: Response: Phase
+Fri_Mar_24_09:13:56_2017: Response: Amplitude
+Fri_Mar_24_09:13:56_2017: Response: Current Mode
+Fri_Mar_24_09:13:56_2017: Response: PWM Period
+Fri_Mar_24_09:13:56_2017: Response: nsamples
+Fri_Mar_24_09:13:56_2017: Response: Output Voltage
+Fri_Mar_24_09:13:56_2017: Response: Output Current
+Fri_Mar_24_09:13:56_2017: Response: Real Power
+Fri_Mar_24_09:13:56_2017: Response: Reactive Power
+Fri_Mar_24_09:13:56_2017: Response: Frequency
+Fri_Mar_24_09:13:56_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:13:56_2017: opened socket with file description: 3
+Fri_Mar_24_09:13:56_2017: opened socket with file description: 3
+Fri_Mar_24_09:14:46_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Fri_Mar_24_09:14:46_2017: node ptr: 6413216
+Fri_Mar_24_09:14:46_2017: cleared old message list, see?
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:14:46_2017: reading a file that is 870 bytes long
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 10697440
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 11018048
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 10756848
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 8054016
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 7609776
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: creating a new node: 
+Fri_Mar_24_09:14:46_2017: writing to msgptr: 11813280
+Fri_Mar_24_09:14:46_2017: <value>%lf</value>
+
+Fri_Mar_24_09:14:46_2017: here are the message components that we are loading: 
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 11813280
+    rlink: 7609776
+    llink: 6413216
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 7609776
+    rlink: 8054016
+    llink: 11813280
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 8054016
+    rlink: 10756848
+    llink: 7609776
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 10756848
+    rlink: 11018048
+    llink: 8054016
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 11018048
+    rlink: 10697440
+    llink: 10756848
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 10697440
+    rlink: 6413216
+    llink: 11018048
+Fri_Mar_24_09:14:46_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 11813280
+    llink: 10697440
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Frequency
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Reactive Power
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Real Power
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Output Current
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Output Voltage
+Fri_Mar_24_09:14:46_2017: adding component to message: Request Phase
+Fri_Mar_24_09:18:02_2017: timer callback
+Fri_Mar_24_09:18:02_2017: send scheduled - new thread with id: -738199808
+Fri_Mar_24_09:18:02_2017: preparing to send message to inverter: azores
+Fri_Mar_24_09:18:12_2017: exhausted message type list...
+Fri_Mar_24_09:18:12_2017: preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_24_09:18:12_2017: sendto() returns with value 66
+Fri_Mar_24_09:18:12_2017: sent message - about to exit thread -738199808
+Fri_Mar_24_09:18:12_2017: send scheduled - new thread with id: -313743616
+Fri_Mar_24_09:18:12_2017: timer callback
+Fri_Mar_24_09:19:04_2017: preparing to send message to inverter: azores
+Fri_Mar_24_09:19:15_2017: exhausted message type list...
+Fri_Mar_24_09:19:15_2017: preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_24_09:31:51_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: creating a new node: 
+Fri_Mar_24_09:31:51_2017: Misdirected Message
+Fri_Mar_24_09:31:51_2017: Unimplemented Protocol
+Fri_Mar_24_09:31:51_2017: Unimplemented Function
+Fri_Mar_24_09:31:51_2017: GP_ACK
+Fri_Mar_24_09:31:51_2017: Inverter Waking Up
+Fri_Mar_24_09:31:51_2017: Set Phase
+Fri_Mar_24_09:31:51_2017: Set Amplitude
+Fri_Mar_24_09:31:51_2017: Set Real Power
+Fri_Mar_24_09:31:51_2017: Set Reactive Power
+Fri_Mar_24_09:31:51_2017: Set Frequency
+Fri_Mar_24_09:31:51_2017: Select Grid Following
+Fri_Mar_24_09:31:51_2017: Select Standalone
+Fri_Mar_24_09:31:51_2017: Disconnect
+Fri_Mar_24_09:31:51_2017: Connect
+Fri_Mar_24_09:31:51_2017: Lock Screen
+Fri_Mar_24_09:31:51_2017: Unlock Screen
+Fri_Mar_24_09:31:51_2017: Display Screen1
+Fri_Mar_24_09:31:51_2017: Display Screen2
+Fri_Mar_24_09:31:51_2017: Display Screen3
+Fri_Mar_24_09:31:51_2017: Display Screen4
+Fri_Mar_24_09:31:51_2017: Request Phase
+Fri_Mar_24_09:31:51_2017: Request Amplitude
+Fri_Mar_24_09:31:51_2017: Request Current Mode
+Fri_Mar_24_09:31:51_2017: Request PWM Period
+Fri_Mar_24_09:31:51_2017: Request nsamples
+Fri_Mar_24_09:31:51_2017: Request Output Voltage
+Fri_Mar_24_09:31:51_2017: Request Output Current
+Fri_Mar_24_09:31:51_2017: Request Real Power
+Fri_Mar_24_09:31:51_2017: Request Reactive Power
+Fri_Mar_24_09:31:51_2017: Request Frequency
+Fri_Mar_24_09:31:51_2017: Response: Phase
+Fri_Mar_24_09:31:51_2017: Response: Amplitude
+Fri_Mar_24_09:31:51_2017: Response: Current Mode
+Fri_Mar_24_09:31:51_2017: Response: PWM Period
+Fri_Mar_24_09:31:51_2017: Response: nsamples
+Fri_Mar_24_09:31:51_2017: Response: Output Voltage
+Fri_Mar_24_09:31:51_2017: Response: Output Current
+Fri_Mar_24_09:31:51_2017: Response: Real Power
+Fri_Mar_24_09:31:51_2017: Response: Reactive Power
+Fri_Mar_24_09:31:51_2017: Response: Frequency
+Fri_Mar_24_09:31:51_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:31:51_2017: opened socket with file description: 3
+Fri_Mar_24_09:31:51_2017: opened socket with file description: 3
+Fri_Mar_24_09:32:19_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Fri_Mar_24_09:32:19_2017: node ptr: 6413216
+Fri_Mar_24_09:32:19_2017: cleared old message list, see?
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:32:19_2017: reading a file that is 870 bytes long
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11249872
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11537024
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11536976
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11256416
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11256464
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: creating a new node: 
+Fri_Mar_24_09:32:19_2017: writing to msgptr: 11256176
+Fri_Mar_24_09:32:19_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:19_2017: here are the message components that we are loading: 
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 11256176
+    rlink: 11256464
+    llink: 6413216
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 11256464
+    rlink: 11256416
+    llink: 11256176
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 11256416
+    rlink: 11536976
+    llink: 11256464
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 11536976
+    rlink: 11537024
+    llink: 11256416
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 11537024
+    rlink: 11249872
+    llink: 11536976
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 11249872
+    rlink: 6413216
+    llink: 11537024
+Fri_Mar_24_09:32:19_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 11256176
+    llink: 11249872
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Frequency
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Reactive Power
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Real Power
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Output Current
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Output Voltage
+Fri_Mar_24_09:32:19_2017: adding component to message: Request Phase
+Fri_Mar_24_09:32:46_2017: 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: creating a new node: 
+Fri_Mar_24_09:32:46_2017: Misdirected Message
+Fri_Mar_24_09:32:46_2017: Unimplemented Protocol
+Fri_Mar_24_09:32:46_2017: Unimplemented Function
+Fri_Mar_24_09:32:46_2017: GP_ACK
+Fri_Mar_24_09:32:46_2017: Inverter Waking Up
+Fri_Mar_24_09:32:46_2017: Set Phase
+Fri_Mar_24_09:32:46_2017: Set Amplitude
+Fri_Mar_24_09:32:46_2017: Set Real Power
+Fri_Mar_24_09:32:46_2017: Set Reactive Power
+Fri_Mar_24_09:32:46_2017: Set Frequency
+Fri_Mar_24_09:32:46_2017: Select Grid Following
+Fri_Mar_24_09:32:46_2017: Select Standalone
+Fri_Mar_24_09:32:46_2017: Disconnect
+Fri_Mar_24_09:32:46_2017: Connect
+Fri_Mar_24_09:32:46_2017: Lock Screen
+Fri_Mar_24_09:32:46_2017: Unlock Screen
+Fri_Mar_24_09:32:46_2017: Display Screen1
+Fri_Mar_24_09:32:46_2017: Display Screen2
+Fri_Mar_24_09:32:46_2017: Display Screen3
+Fri_Mar_24_09:32:46_2017: Display Screen4
+Fri_Mar_24_09:32:46_2017: Request Phase
+Fri_Mar_24_09:32:46_2017: Request Amplitude
+Fri_Mar_24_09:32:46_2017: Request Current Mode
+Fri_Mar_24_09:32:46_2017: Request PWM Period
+Fri_Mar_24_09:32:46_2017: Request nsamples
+Fri_Mar_24_09:32:46_2017: Request Output Voltage
+Fri_Mar_24_09:32:46_2017: Request Output Current
+Fri_Mar_24_09:32:46_2017: Request Real Power
+Fri_Mar_24_09:32:46_2017: Request Reactive Power
+Fri_Mar_24_09:32:46_2017: Request Frequency
+Fri_Mar_24_09:32:46_2017: Response: Phase
+Fri_Mar_24_09:32:46_2017: Response: Amplitude
+Fri_Mar_24_09:32:46_2017: Response: Current Mode
+Fri_Mar_24_09:32:46_2017: Response: PWM Period
+Fri_Mar_24_09:32:46_2017: Response: nsamples
+Fri_Mar_24_09:32:46_2017: Response: Output Voltage
+Fri_Mar_24_09:32:46_2017: Response: Output Current
+Fri_Mar_24_09:32:46_2017: Response: Real Power
+Fri_Mar_24_09:32:46_2017: Response: Reactive Power
+Fri_Mar_24_09:32:46_2017: Response: Frequency
+Fri_Mar_24_09:32:46_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:32:46_2017: opened socket with file description: 3
+Fri_Mar_24_09:32:46_2017: opened socket with file description: 3
+Fri_Mar_24_09:32:58_2017: loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Fri_Mar_24_09:32:58_2017: node ptr: 6413216
+Fri_Mar_24_09:32:58_2017: cleared old message list, see?
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 6413216
+    llink: 6413216
+Fri_Mar_24_09:32:58_2017: reading a file that is 870 bytes long
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11659344
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11504800
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11937248
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11504848
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11821808
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: creating a new node: 
+Fri_Mar_24_09:32:58_2017: writing to msgptr: 11821856
+Fri_Mar_24_09:32:58_2017: <value>%lf</value>
+
+Fri_Mar_24_09:32:58_2017: here are the message components that we are loading: 
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 11821856
+    rlink: 11821808
+    llink: 6413216
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 11821808
+    rlink: 11504848
+    llink: 11821856
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 11504848
+    rlink: 11937248
+    llink: 11821808
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 11937248
+    rlink: 11504800
+    llink: 11504848
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 11504800
+    rlink: 11659344
+    llink: 11937248
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 11659344
+    rlink: 6413216
+    llink: 11504800
+Fri_Mar_24_09:32:58_2017: STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6413216
+    rlink: 11821856
+    llink: 11659344
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Frequency
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Reactive Power
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Real Power
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Output Current
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Output Voltage
+Fri_Mar_24_09:32:58_2017: adding component to message: Request Phase
+Fri_Mar_24_09:33:00_2017: preparing to send message to inverter: azores
+Fri_Mar_24_09:33:00_2017: exhausted message type list...
+Fri_Mar_24_09:33:00_2017: preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_24_09:33:00_2017: sendto() returns with value 66
+Fri_Mar_24_09:33:00_2017: check buffer - new thread with id: -746592512
+Fri_Mar_24_09:33:00_2017: received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_24_09:33:00_2017: received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x01 0x40 0x09 0x40 0x4d 0xe7 0x61 0x9e 0xfd 0xdb 0x33 0x40 0x08 0x40 0x34 0x40 0xee 0x79 0x3c 0x4a 0xbd 0x40 0x07 0x40 0x3f 0x74 0xf2 0x91 0xb6 0xaa 0xcd 0x40 0x06 0x40 0x02 0xba 0x4c 0x5f 0xb3 0x4a 0xdd 0x40 0x05 0x40 0x31 0xad 0x74 0x93 0x8d 0x09 0xf4 0x40 0000 0xbf 0x9a 0x87 0x51 0x2b 0xe2 0x16 0xc4 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: creating a new node: 
+Fri_Mar_24_09:33:00_2017: processed message - about to exit thread -746592512
+Fri_Mar_24_09:33:19_2017: preparing to send message to inverter: azores
+Fri_Mar_24_09:33:19_2017: exhausted message type list...
+Fri_Mar_24_09:33:19_2017: preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_24_09:33:19_2017: sendto() returns with value 66
