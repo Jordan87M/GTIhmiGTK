@@ -17,7 +17,7 @@ chosenmsg *insertchosenmsg(chosenmsg *entry1, int newdata, double newvalue)
     entry1->rlink = (void*) newlyinserted;
     ((chosenmsg*) newlyinserted->rlink)->llink =(void*) newlyinserted;
     logwriteln(debugfilename,"creating a new node: ");
-    //debugprintnodeinfo(newlyinserted);
+    debugprintnodeinfo(newlyinserted);
 
     return newlyinserted;
 }
