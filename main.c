@@ -128,6 +128,7 @@ pthread_mutex_t sendmsgprotector;
 pthread_mutex_t dispaktprotector;
 pthread_mutex_t logprotector;
 pthread_mutex_t llprotector;
+pthread_mutex_t sockprotector;
 void (*sendandreceive[MAX_N_INVERTERS])(void);
 
 
@@ -220,7 +221,7 @@ int main(int argc, char *argv[])
     insertchosenmsg(schedmsgperm, 29, 0.0);
 
     //print signal list for debugging
-    printfullsignallist(debugfilename);
+    //printfullsignallist(debugfilename);
 
     //initialize structure for message components to be sent
     chosenperm = createnewchosendllist();
@@ -552,8 +553,10 @@ gboolean displayupdate(gpointer nothing)
         if(gtilist[i].extant == 1)
         {
             pthread_mutex_lock(&llprotector);
+            pthread_mutex_lock(&logprotector);
             chosenmsg *current = gtilist[i].reclistperm;
             pthread_mutex_unlock(&llprotector);
+            pthread_mutex_unlock(&logprotector);
             do{
                 current = moveright(current);
                 if(current->data != -1)
@@ -580,8 +583,10 @@ gboolean displayupdate(gpointer nothing)
 
             do{
                 pthread_mutex_lock(&llprotector);
+                pthread_mutex_lock(&logprotector);
                 current = moveright(current);
                 pthread_mutex_unlock(&llprotector);
+                pthread_mutex_unlock(&logprotector);
                 if(signallist[current->data].code == RESPONSE_PHASE_CODE)
                 {
                     gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
@@ -675,29 +680,23 @@ void listenerthreadroutine(void)
 
         if(timerteardownflag == 1)
         {
+            int retval;
 
-            struct itimerspec disarm_value;
-
-            struct itimerspec curr_time;
-
-            timer_gettime(schedtimer, &curr_time);
-
+            retval = timer_delete(schedtimer);
             pthread_mutex_lock(&logprotector);
-            sprintf(debugbuffer,"time left: %ds and %dns \nnumber of overruns: %d",curr_time.it_value.tv_sec, curr_time.it_value.tv_nsec, timer_getoverrun(schedtimer));
-            logwriteln(debugfilename,debugbuffer);
-            pthread_mutex_unlock(&logprotector);
-
-            disarm_value.it_value.tv_nsec = 0;
-            disarm_value.it_value.tv_sec = 0;
-
-            timer_settime(schedtimer,0,&disarm_value,NULL);
-            pthread_mutex_lock(&logprotector);
-            logwriteln(debugfilename,"stopping regular data collection");
+            if(retval < 0)
+            {
+                sprintf(debugbuffer,"timer_delete failed: %s",strerror(errno));
+                logwriteln(debugfilename,debugbuffer);
+            }
+            else
+            {
+                logwriteln(debugfilename,"deleted timer");
+            }
             pthread_mutex_unlock(&logprotector);
 
             timerteardownflag = 0;
         }
-
     }
 }
 
@@ -771,8 +770,6 @@ int startcollection(void)
     return 0;
 }
 
-
-
 int stopcollection(void)
 {
     //g_source_remove(timersource);
@@ -786,6 +783,13 @@ void sendregularcollectionmessagespawner(int sig)
 {
 
     int i;
+
+    pthread_mutex_lock(&logprotector);
+    sprintf(debugbuffer,"timer signal received by thread %d", (int) pthread_self());
+    logwriteln(debugfilename,debugbuffer);
+    pthread_mutex_unlock(&logprotector);
+
+
     for(i = 0; i < MAX_N_INVERTERS; i++)
     {
         if(gtilist[i].extant == 1)
@@ -941,10 +945,8 @@ void disassemblepacket(unsigned char *buffer, int index)
 
     //clear old received message components
     pthread_mutex_lock(&llprotector);
-    pthread_mutex_lock(&logprotector);
     clearlist(gtilist[index].reclistperm);
     pthread_mutex_unlock(&llprotector);
-    pthread_mutex_unlock(&logprotector);
     for(i = 0; i < ncomps; i++)
     {
         memcpy(&responsetype,buffer + TYPE_OFFSET + i*MULTICOMP_OFFSET,2);
@@ -954,11 +956,9 @@ void disassemblepacket(unsigned char *buffer, int index)
         flipbytes(&responsevalue,8);
 
         pthread_mutex_lock(&llprotector);
-        pthread_mutex_lock(&logprotector);
         responsetypeindex = lookupbycode(responsetype);
         insertchosenmsg(gtilist[index].reclistperm,responsetypeindex,responsevalue);
         pthread_mutex_unlock(&llprotector);
-        pthread_mutex_unlock(&logprotector);
     }
     pthread_mutex_lock(&logprotector);
     sprintf(debugbuffer,"processed message - about to exit thread %d",(unsigned int) pthread_self());
@@ -1537,9 +1537,11 @@ void messagehandler0(void)
     tv.tv_sec = 1;
     tv.tv_usec = 0;
 
+    pthread_mutex_lock(&sockprotector);
     socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
     setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
     setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
+    pthread_mutex_unlock(&sockprotector);
 
     if(socket_desc == -1)
     {
@@ -1584,7 +1586,11 @@ void messagehandler0(void)
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
     }
+
+    pthread_mutex_lock(&sockprotector);
     close(socket_desc);
+    pthread_mutex_unlock(&sockprotector);
+
     pthread_mutex_lock(&logprotector);
     sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
     logwriteln(debugfilename,debugbuffer);
