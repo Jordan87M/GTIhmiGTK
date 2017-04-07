@@ -128,3 +128,89 @@ closing a message component
 done reading messages
 found end of configs at line 37. 
 Now we're done.
+Fri_Mar_31_16:23:23_2017 (89754256.167000): ***************************************NEW
+ file is an xml file
+ xml version 1.0
+ encoding is UTF-8
+ format version 0.1
+looking for an config opening tag - and here it is
+found beginning of inverters at line 4
+opening a new inverter
+adding inverter name attribute at line 6 to 0: azores
+inverter ipaddr attribute at line 7 to 0: 192.168.0.153
+inverter macaddr attribute at line 8 to 0: 30:85:a9:2c:23:18
+closing an inverter
+marking inverter 0 as active
+nextindex : 1
+finished reading inverters
+found beginning of message components at line 11
+opening a new message
+reading component index at line 13 : 20
+reading component value at line 14 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 17 : 25
+reading component value at line 18 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 21 : 26
+reading component value at line 22 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 25 : 27
+reading component value at line 26 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 29 : 28
+reading component value at line 30 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 33 : 29
+reading component value at line 34 : 0.000000
+closing a message component
+done reading messages
+found end of configs at line 37. 
+Now we're done.
+Fri_Mar_31_19:35:31_2017 (8933470.425000): ***************************************NEW
+ file is an xml file
+ xml version 1.0
+ encoding is UTF-8
+ format version 0.1
+looking for an config opening tag - and here it is
+found beginning of inverters at line 4
+opening a new inverter
+adding inverter name attribute at line 6 to 0: azores
+inverter ipaddr attribute at line 7 to 0: 192.168.0.153
+inverter macaddr attribute at line 8 to 0: 30:85:a9:2c:23:18
+closing an inverter
+marking inverter 0 as active
+nextindex : 1
+finished reading inverters
+found beginning of message components at line 11
+opening a new message
+reading component index at line 13 : 20
+reading component value at line 14 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 17 : 25
+reading component value at line 18 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 21 : 26
+reading component value at line 22 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 25 : 27
+reading component value at line 26 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 29 : 28
+reading component value at line 30 : 0.000000
+closing a message component
+opening a new message
+reading component index at line 33 : 29
+reading component value at line 34 : 0.000000
+closing a message component
+done reading messages
+found end of configs at line 37. 
+Now we're done.

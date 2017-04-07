@@ -1,4 +1,6 @@
 #include <time.h>
+#include <sys/timeb.h>
+#include <sys/time.h>
 
 #include "logconf.h"
 #include "gtihmi.h"
@@ -9,16 +11,24 @@ int logwriteln(char *filename, const char *line)
     FILE *fp;
     fp = fopen(filename,"a");
     int retval;
+    double us;
 
     time_t now;
     struct tm *timeinfo;
     char timebuff[64];
+    struct timespec tsnow;
+    struct timespec tselapsed;
+
+
+
     time(&now);
+    clock_gettime(0,&tsnow);
     timeinfo = localtime(&now);
     snprintf(timebuff, 64, "%s",asctime(timeinfo));
     replaceandclean(timebuff,' ','_');
-
-    retval = fprintf(fp, "\n%s: %s",timebuff, line);
+    elapsedtime(&tsnow,&tselapsed);
+    us = tselapsed.tv_sec*1000000 + tselapsed.tv_nsec*.001;
+    retval = fprintf(fp, "\n%s (%f): %s",timebuff, us, line);
     fclose(fp);
 
     return retval;

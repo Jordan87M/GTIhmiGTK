@@ -508,3 +508,257 @@ Fri_Mar_24_09:33:19_2017: preparing to send message to inverter: azores
 Fri_Mar_24_09:33:19_2017: exhausted message type list...
 Fri_Mar_24_09:33:19_2017: preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
 Fri_Mar_24_09:33:19_2017: sendto() returns with value 66
+Fri_Mar_31_16:20:41_2017 (10591668.873000): 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_31_16:21:53_2017 (7.753000): 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_31_16:21:53_2017 (71.219000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 6425504
+    llink: 6425504
+Fri_Mar_31_16:21:53_2017 (88.465000): about to spawn listener thread from main thread (-134497856)
+Fri_Mar_31_16:21:53_2017 (39710.900000): listener thread running with id -267438336
+Fri_Mar_31_16:23:23_2017 (89754128.545000): loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Fri_Mar_31_16:23:23_2017 (89754193.939000): node ptr: 6425504
+Fri_Mar_31_16:23:23_2017 (89754224.564000): cleared old message list, see?
+Fri_Mar_31_16:23:23_2017 (89754241.409000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 6425504
+    llink: 6425504
+Fri_Mar_31_16:23:23_2017 (89772491.519000): reading a file that is 870 bytes long
+Fri_Mar_31_16:23:23_2017 (89772657.812000): writing to msgptr: 11511232
+Fri_Mar_31_16:23:23_2017 (89772683.471000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89772725.180000): writing to msgptr: 11381680
+Fri_Mar_31_16:23:23_2017 (89772747.392000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89772786.231000): writing to msgptr: 11746640
+Fri_Mar_31_16:23:23_2017 (89772808.078000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89772847.691000): writing to msgptr: 10889808
+Fri_Mar_31_16:23:23_2017 (89772870.475000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89772909.303000): writing to msgptr: 11506736
+Fri_Mar_31_16:23:23_2017 (89772930.957000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89772969.569000): writing to msgptr: 11506784
+Fri_Mar_31_16:23:23_2017 (89772991.327000): <value>%lf</value>
+
+Fri_Mar_31_16:23:23_2017 (89773178.399000): here are the message components that we are loading: 
+Fri_Mar_31_16:23:23_2017 (89773199.459000): STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 11506784
+    rlink: 11506736
+    llink: 6425504
+Fri_Mar_31_16:23:23_2017 (89773213.649000): STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 11506736
+    rlink: 10889808
+    llink: 11506784
+Fri_Mar_31_16:23:23_2017 (89773227.157000): STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 10889808
+    rlink: 11746640
+    llink: 11506736
+Fri_Mar_31_16:23:23_2017 (89773240.611000): STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 11746640
+    rlink: 11381680
+    llink: 10889808
+Fri_Mar_31_16:23:23_2017 (89773253.821000): STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 11381680
+    rlink: 11511232
+    llink: 11746640
+Fri_Mar_31_16:23:23_2017 (89773267.249000): STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 11511232
+    rlink: 6425504
+    llink: 11381680
+Fri_Mar_31_16:23:23_2017 (89773282.046000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 11506784
+    llink: 11511232
+Fri_Mar_31_16:23:23_2017 (89773333.623000): adding component to message: Request Frequency
+Fri_Mar_31_16:23:23_2017 (89773404.923000): adding component to message: Request Reactive Power
+Fri_Mar_31_16:23:23_2017 (89773441.730000): adding component to message: Request Real Power
+Fri_Mar_31_16:23:23_2017 (89773472.101000): adding component to message: Request Output Current
+Fri_Mar_31_16:23:23_2017 (89773503.046000): adding component to message: Request Output Voltage
+Fri_Mar_31_16:23:23_2017 (89773540.982000): adding component to message: Request Phase
+Fri_Mar_31_16:23:37_2017 (103345460.033000): selected index: 0
+Fri_Mar_31_16:23:37_2017 (103346250.701000): opened socket with file description: 12
+Fri_Mar_31_16:23:37_2017 (103346298.502000): preparing to send message to inverter: azores
+Fri_Mar_31_16:23:37_2017 (103346323.680000): exhausted message type list...
+Fri_Mar_31_16:23:37_2017 (103346360.617000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_16:23:37_2017 (103346424.539000): sendto() returns with value 66
+Fri_Mar_31_16:23:37_2017 (103346744.012000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_16:23:37_2017 (103346786.506000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x01 0x40 0x09 0x40 0x4d 0xe9 0xfa 0xc3 0xeb 0xee 0x5d 0x40 0x08 0x40 0x34 0x3d 0xcc 0x96 0xc5 0x7e 0x74 0x40 0x07 0x40 0x3f 0x71 0x4c 0x5c 0xe7 0x4f 0x58 0x40 0x06 0x3f 0xff 0x83 0x84 0xb1 0x3a 0xea 0x18 0x40 0x05 0x40 0x31 0xf5 0xb7 0x96 0x16 0xbc 0x73 0x40 0000 0x3f 0xba 0xa5 0x5d 0x65 0x34 0x29 0x28 
+Fri_Mar_31_16:23:37_2017 (103346822.620000): processed message - about to exit thread -313743616
+Fri_Mar_31_16:23:37_2017 (103346837.136000): but are we really about to exit?
+Fri_Mar_31_16:23:37_2017 (103346850.627000): terminating thread -313743616
+Fri_Mar_31_16:23:41_2017 (107946181.112000): selected index: 0
+Fri_Mar_31_16:23:41_2017 (107946793.926000): opened socket with file description: 12
+Fri_Mar_31_16:23:41_2017 (107946838.644000): preparing to send message to inverter: azores
+Fri_Mar_31_16:23:41_2017 (107946861.949000): exhausted message type list...
+Fri_Mar_31_16:23:41_2017 (107946885.433000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x02 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_16:23:41_2017 (107946935.497000): sendto() returns with value 66
+Fri_Mar_31_16:23:41_2017 (107947225.999000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_16:23:41_2017 (107947268.182000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x02 0x40 0x09 0x40 0x4d 0xfc 0x65 0x29 0xc6 0xd4 0x8a 0x40 0x08 0x40 0x33 0xff 0x85 0xc2 0xe7 0x2b 0x84 0x40 0x07 0x40 0x40 0x28 0x8f 0x21 0x11 0x94 0x25 0x40 0x06 0x40 0000 0x99 0x39 0xc3 0xa5 0xc8 0x56 0x40 0x05 0x40 0x31 0xe3 0x01 0x4c 0x3f 0xf9 0x16 0x40 0000 0x3f 0xd2 0x34 0xeb 0xd1 0x13 0x58 0x6d 
+Fri_Mar_31_16:23:41_2017 (107947295.958000): processed message - about to exit thread -746592512
+Fri_Mar_31_16:23:41_2017 (107947311.099000): but are we really about to exit?
+Fri_Mar_31_16:23:41_2017 (107947325.135000): terminating thread -746592512
+Fri_Mar_31_16:23:48_2017 (114931052.818000): selected index: 0
+Fri_Mar_31_16:23:48_2017 (114931771.938000): opened socket with file description: 12
+Fri_Mar_31_16:23:48_2017 (114931830.916000): preparing to send message to inverter: azores
+Fri_Mar_31_16:23:48_2017 (114931851.425000): exhausted message type list...
+Fri_Mar_31_16:23:48_2017 (114931875.165000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x03 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_16:23:48_2017 (114931925.886000): sendto() returns with value 66
+Fri_Mar_31_16:23:48_2017 (114932244.695000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_16:23:48_2017 (114932286.801000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x03 0x40 0x09 0x40 0x4d 0xdc 0xe6 0x19 0xed 0x40 0x49 0x40 0x08 0x40 0x34 0x4f 0xf4 0xaa 0x70 0xcb 0x06 0x40 0x07 0x40 0x3f 0x8f 0xa6 0x40 0xed 0x95 0x36 0x40 0x06 0x3f 0xfd 0xdf 0xb9 0xcf 0x18 0x97 0x83 0x40 0x05 0x40 0x31 0xce 0x03 0x0f 0x19 0x97 0x39 0x40 0000 0x3f 0xc5 0xe1 0xb4 0x18 0x86 0x77 0xb4 
+Fri_Mar_31_16:23:48_2017 (114932309.250000): processed message - about to exit thread -738199808
+Fri_Mar_31_16:23:48_2017 (114932323.606000): but are we really about to exit?
+Fri_Mar_31_16:23:48_2017 (114932337.442000): terminating thread -738199808
+Fri_Mar_31_16:23:52_2017 (118354865.696000): selected index: 0
+Fri_Mar_31_16:23:52_2017 (118355533.146000): opened socket with file description: 12
+Fri_Mar_31_16:23:52_2017 (118355582.913000): preparing to send message to inverter: azores
+Fri_Mar_31_16:23:52_2017 (118355612.100000): exhausted message type list...
+Fri_Mar_31_16:23:52_2017 (118355638.741000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x04 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_16:23:52_2017 (118355695.013000): sendto() returns with value 66
+Fri_Mar_31_16:23:52_2017 (118355980.322000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_16:23:52_2017 (118356006.960000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x04 0x40 0x09 0x40 0x4d 0xd5 0xac 0x95 0xa8 0xa1 0x6e 0x40 0x08 0x40 0x33 0xed 0xe9 0x78 0x1f 0000 0x83 0x40 0x07 0x40 0x3f 0xe0 0x64 0xb3 0x9e 0xc3 0x53 0x40 0x06 0x3f 0xfd 0x12 0x56 0x9a 0xaf 0x7d 0xb6 0x40 0x05 0x40 0x31 0x9f 0x1c 0xb7 0x30 0xf8 0x56 0x40 0000 0xbf 0xa6 0x08 0xe2 0x55 0x82 0x8d 0x72 
+Fri_Mar_31_16:23:52_2017 (118356024.318000): processed message - about to exit thread -754985216
+Fri_Mar_31_16:23:52_2017 (118356037.890000): but are we really about to exit?
+Fri_Mar_31_16:23:52_2017 (118356051.563000): terminating thread -754985216
+Fri_Mar_31_16:23:53_2017 (119931084.900000): selected index: 0
+Fri_Mar_31_16:23:53_2017 (119931695.157000): opened socket with file description: 12
+Fri_Mar_31_16:23:53_2017 (119931742.289000): preparing to send message to inverter: azores
+Fri_Mar_31_16:23:53_2017 (119931771.041000): exhausted message type list...
+Fri_Mar_31_16:23:53_2017 (119931797.583000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x05 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_16:23:53_2017 (119931846.647000): sendto() returns with value 66
+Fri_Mar_31_16:23:53_2017 (119932155.119000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_16:23:53_2017 (119932196.768000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x05 0x40 0x09 0x40 0x4d 0xe6 0x37 0xe4 0xb7 0x92 0xda 0x40 0x08 0x40 0x33 0xad 0xc4 0x90 0x4b 0xcd 0x32 0x40 0x07 0x40 0x40 0x11 0xa0 0xb6 0xf3 0xa3 0xfc 0x40 0x06 0x40 0x01 0x07 0x7f 0x3e 0x31 0x3a 0xb8 0x40 0x05 0x40 0x32 0x01 0x60 0x02 0xb0 0x4c 0x20 0x40 0000 0x3f 0xd5 0x27 0x47 0x97 0xdc 0x12 0x66 
+Fri_Mar_31_16:23:53_2017 (119932219.567000): processed message - about to exit thread -763377920
+Fri_Mar_31_16:23:53_2017 (119932234.073000): but are we really about to exit?
+Fri_Mar_31_16:23:53_2017 (119932248.101000): terminating thread -763377920
+Fri_Mar_31_19:35:22_2017 (20.229000): 
+**********************
+BEGINNING NEW SESSION!
+********************
+
+Fri_Mar_31_19:35:22_2017 (24695.978000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 6425504
+    llink: 6425504
+Fri_Mar_31_19:35:22_2017 (24739.106000): about to spawn listener thread from main thread (-134497856)
+Fri_Mar_31_19:35:22_2017 (30300.464000): listener thread running with id -267438336
+Fri_Mar_31_19:35:31_2017 (8933355.712000): loading configuration from file /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/schedtest.config
+Fri_Mar_31_19:35:31_2017 (8933414.337000): node ptr: 6425504
+Fri_Mar_31_19:35:31_2017 (8933432.885000): cleared old message list, see?
+Fri_Mar_31_19:35:31_2017 (8933457.421000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 6425504
+    llink: 6425504
+Fri_Mar_31_19:35:31_2017 (8933501.175000): reading a file that is 870 bytes long
+Fri_Mar_31_19:35:31_2017 (8933645.785000): writing to msgptr: 11479648
+Fri_Mar_31_19:35:31_2017 (8933679.762000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8933722.629000): writing to msgptr: 12064224
+Fri_Mar_31_19:35:31_2017 (8933745.300000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8933784.854000): writing to msgptr: 11949104
+Fri_Mar_31_19:35:31_2017 (8933807.277000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8933846.975000): writing to msgptr: 11475408
+Fri_Mar_31_19:35:31_2017 (8933869.486000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8933910.174000): writing to msgptr: 12067968
+Fri_Mar_31_19:35:31_2017 (8933932.942000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8933972.835000): writing to msgptr: 11950272
+Fri_Mar_31_19:35:31_2017 (8933995.605000): <value>%lf</value>
+
+Fri_Mar_31_19:35:31_2017 (8934124.535000): here are the message components that we are loading: 
+Fri_Mar_31_19:35:31_2017 (8934144.261000): STARTNEW NODE
+    data: 29
+    value: 0.000000
+    loc: 11950272
+    rlink: 12067968
+    llink: 6425504
+Fri_Mar_31_19:35:31_2017 (8934159.096000): STARTNEW NODE
+    data: 28
+    value: 0.000000
+    loc: 12067968
+    rlink: 11475408
+    llink: 11950272
+Fri_Mar_31_19:35:31_2017 (8934173.541000): STARTNEW NODE
+    data: 27
+    value: 0.000000
+    loc: 11475408
+    rlink: 11949104
+    llink: 12067968
+Fri_Mar_31_19:35:31_2017 (8934187.499000): STARTNEW NODE
+    data: 26
+    value: 0.000000
+    loc: 11949104
+    rlink: 12064224
+    llink: 11475408
+Fri_Mar_31_19:35:31_2017 (8934201.092000): STARTNEW NODE
+    data: 25
+    value: 0.000000
+    loc: 12064224
+    rlink: 11479648
+    llink: 11949104
+Fri_Mar_31_19:35:31_2017 (8934214.729000): STARTNEW NODE
+    data: 20
+    value: 0.000000
+    loc: 11479648
+    rlink: 6425504
+    llink: 12064224
+Fri_Mar_31_19:35:31_2017 (8934229.304000): STARTNEW NODE
+    data: -1
+    value: 0.000000
+    loc: 6425504
+    rlink: 11950272
+    llink: 11479648
+Fri_Mar_31_19:35:31_2017 (8934277.502000): adding component to message: Request Frequency
+Fri_Mar_31_19:35:31_2017 (8934345.614000): adding component to message: Request Reactive Power
+Fri_Mar_31_19:35:31_2017 (8934382.153000): adding component to message: Request Real Power
+Fri_Mar_31_19:35:31_2017 (8934413.594000): adding component to message: Request Output Current
+Fri_Mar_31_19:35:31_2017 (8934443.618000): adding component to message: Request Output Voltage
+Fri_Mar_31_19:35:31_2017 (8934473.126000): adding component to message: Request Phase
+Fri_Mar_31_19:35:33_2017 (10805418.499000): selected index: 0
+Fri_Mar_31_19:35:33_2017 (10806345.016000): opened socket with file description: 12
+Fri_Mar_31_19:35:33_2017 (10806403.392000): preparing to send message to inverter: azores
+Fri_Mar_31_19:35:33_2017 (10806429.629000): exhausted message type list...
+Fri_Mar_31_19:35:33_2017 (10806459.162000): preparing to send message to inverter: azores0xa3 0xcf 0x01 0x06 0000 0x01 0x30 0x09 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x08 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x07 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x06 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0x05 0000 0000 0000 0000 0000 0000 0000 0000 0x30 0000 0000 0000 0000 0000 0000 0000 0000 0000 
+Fri_Mar_31_19:35:33_2017 (10806525.424000): sendto() returns with value 66
+Fri_Mar_31_19:35:33_2017 (10806877.868000): received 66 bytes of data from 0. here is the payload bytestream: 
+Fri_Mar_31_19:35:33_2017 (10806913.075000): received 66 bytes of data from 0. here is the payload bytestream: 0xac 0x3f 0x01 0x06 0000 0x01 0x40 0x09 0x40 0x4e 0x0c 0x01 0x52 0x5c 0x9a 0x71 0x40 0x08 0x40 0x33 0xff 0xb0 0xf8 0x95 0x45 0x88 0x40 0x07 0x40 0x3f 0xf4 0x49 0xb3 0xc9 0x2e 0xb2 0x40 0x06 0x3f 0xfd 0x88 0x7e 0x74 0x0e 0x3f 0x8c 0x40 0x05 0x40 0x31 0xd2 0x27 0x13 0xf8 0x23 0xe0 0x40 0000 0x3f 0xcf 0xe2 0x2e 0x78 0x1e 0xb2 0x94 
+Fri_Mar_31_19:35:33_2017 (10806940.580000): processed message - about to exit thread -746592512
+Fri_Mar_31_19:35:33_2017 (10806957.944000): but are we really about to exit?
+Fri_Mar_31_19:35:33_2017 (10806973.783000): terminating thread -746592512
+Fri_Mar_31_19:35:45_2017 (22719822.982000): timer signal received by thread -267438336
+Fri_Mar_31_19:35:45_2017 (22722163.494000): send scheduled - new thread with id: -313743616
+Fri_Mar_31_19:35:45_2017 (22722289.877000): opened socket with file description: 16

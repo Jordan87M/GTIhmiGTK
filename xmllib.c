@@ -324,6 +324,7 @@ int processline(const char *line, readstatus *status, chosenmsg *loadedmsgs, GTI
                 {
                     fprintf(fpdebug,"\nclosing an inverter");
                     status->readinganinverter = 0;
+                    loadedgtilist[*invcreateindex].newdata = 0;
                     loadedgtilist[*invcreateindex].extant = 1;
                     fprintf(fpdebug,"\nmarking inverter %d as active", *invcreateindex);
                     //increment counter for loaded inverters

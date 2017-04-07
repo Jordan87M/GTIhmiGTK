@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
+#include <execinfo.h>
 
 //#include <fcntl-linux.h>
 
@@ -110,8 +111,9 @@ GTIinfo gtilist[MAX_N_INVERTERS];
 int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 //int socket_desc;
-int timersetupflag = 0;
-int timerteardownflag = 0;
+volatile int timersetupflag = 0;
+volatile int timerteardownflag = 0;
+struct timespec tsstart;
 int socketsetupflag = 0;
 int chosenrecipient;
 chosenmsg *chosenperm;
@@ -128,6 +130,7 @@ pthread_mutex_t sendmsgprotector;
 pthread_mutex_t dispaktprotector;
 pthread_mutex_t logprotector;
 pthread_mutex_t llprotector;
+pthread_mutex_t flipprotector;
 pthread_mutex_t sockprotector;
 void (*sendandreceive[MAX_N_INVERTERS])(void);
 
@@ -182,6 +185,8 @@ void checkrecbuffer(int);
 void disassemblepacket(unsigned char *buffer, int index);
 void listenerthreadroutine(void);
 gboolean displayupdate(gpointer nothing);
+void elapsedtime(struct timespec *tsnow, struct timespec *tselapsed);
+
 
 void messagehandler(void);
 void messagehandler0(void);
@@ -195,6 +200,22 @@ void messagehandler7(void);
 void messagehandler8(void);
 void messagehandler9(void);
 
+void segvhandler(int sig)
+{
+    FILE *fp;
+    int bufsize = 2048;
+    int size;
+    char buffer[bufsize];
+    pthread_mutex_lock(&logprotector);
+    logwriteln(debugfilename,"SIGSEGV :(\n");
+    size = backtrace(&buffer, bufsize);
+    fp = fopen(debugfilename,"a");
+    backtrace_symbols_fd(&buffer, size, fileno(fp));
+    fclose(fp);
+    pthread_mutex_unlock(&logprotector);
+    exit(0);
+}
+
 int main(int argc, char *argv[])
 {
     GtkApplication *app;
@@ -203,6 +224,8 @@ int main(int argc, char *argv[])
     int retval;
     int i;
 
+    //mark start time
+    clock_gettime(0,&tsstart);
 
     sprintf(debugfilename,"debuglog");
     logwriteln(debugfilename,"\n**********************\nBEGINNING NEW SESSION!\n********************\n");
@@ -223,6 +246,12 @@ int main(int argc, char *argv[])
     //print signal list for debugging
     //printfullsignallist(debugfilename);
 
+    //designate handler for SIGSEGV
+    struct sigaction sa;
+    sa.sa_handler = segvhandler;
+    sigaction(SIGSEGV,&sa,NULL);
+
+
     //initialize structure for message components to be sent
     chosenperm = createnewchosendllist();
     debugprintnodeinfo(chosenperm);
@@ -232,7 +261,8 @@ int main(int argc, char *argv[])
     }
 
     //spawn thread to listen to signals -- must be done before opensocket()
-    logwriteln(debugfilename,"about to launch listener thread");
+    sprintf(debugbuffer,"about to spawn listener thread from main thread (%d)",(int) pthread_self());
+    logwriteln(debugfilename,debugbuffer);
     pthread_create(&listenerthread,NULL,listenerthreadroutine, NULL);
 
     sendandreceive[0] = messagehandler0;
@@ -544,6 +574,10 @@ gboolean displayupdate(gpointer nothing)
     double freq;
     double vrms;
     double irms;
+
+    char fnbuffer[48];
+    FILE *fp;
+
     //update one off message display from list
     gtk_list_store_clear(recstore);
 
@@ -553,10 +587,8 @@ gboolean displayupdate(gpointer nothing)
         if(gtilist[i].extant == 1)
         {
             pthread_mutex_lock(&llprotector);
-            pthread_mutex_lock(&logprotector);
             chosenmsg *current = gtilist[i].reclistperm;
             pthread_mutex_unlock(&llprotector);
-            pthread_mutex_unlock(&logprotector);
             do{
                 current = moveright(current);
                 if(current->data != -1)
@@ -583,10 +615,8 @@ gboolean displayupdate(gpointer nothing)
 
             do{
                 pthread_mutex_lock(&llprotector);
-                pthread_mutex_lock(&logprotector);
                 current = moveright(current);
                 pthread_mutex_unlock(&llprotector);
-                pthread_mutex_unlock(&logprotector);
                 if(signallist[current->data].code == RESPONSE_PHASE_CODE)
                 {
                     gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
@@ -623,10 +653,15 @@ gboolean displayupdate(gpointer nothing)
             gtk_tree_view_set_model(GTK_TREE_VIEW(activetree), model);
             gtk_widget_show_all(window);
 
-            //sprintf(fnbuffer,"inv%dlog",i);
-            //fp = fopen(fnbuffer,"a");
-            //fprintf(fp,"%f,%f,%f,%f,%f,%f\n",phase,vrms,irms,powreal,powreac,freq);
-            //fclose(fp);
+            if(gtilist[i].newdata == 1)
+            {
+                sprintf(fnbuffer,"%sdata",gtilist[i].name);
+                fp = fopen(fnbuffer,"a");
+                fprintf(fp,"%f,%f,%f,%f,%f,%f\n",phase,vrms,irms,powreal,powreac,freq);
+                fclose(fp);
+                gtilist[i].newdata = 0;
+            }
+
         }
     }
 
@@ -638,6 +673,11 @@ void listenerthreadroutine(void)
 {
     sprintf(debugbuffer,"listener thread running with id %d",(unsigned int) listenerthread);
     logwriteln(debugfilename,debugbuffer);
+
+    struct sigaction sa;
+    sa.sa_handler = segvhandler;
+    sigaction(SIGSEGV,&sa,NULL);
+
     //just wait for signals
     while(1)
     {
@@ -697,9 +737,10 @@ void listenerthreadroutine(void)
 
             timerteardownflag = 0;
         }
+
+        sleep(1);
     }
 }
-
 
 
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data)
@@ -784,10 +825,10 @@ void sendregularcollectionmessagespawner(int sig)
 
     int i;
 
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"timer signal received by thread %d", (int) pthread_self());
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
+    //pthread_mutex_lock(&logprotector);
+    //sprintf(debugbuffer,"timer signal received by thread %d", (int) pthread_self());
+    //logwriteln(debugfilename,debugbuffer);
+    //pthread_mutex_unlock(&logprotector);
 
 
     for(i = 0; i < MAX_N_INVERTERS; i++)
@@ -797,13 +838,17 @@ void sendregularcollectionmessagespawner(int sig)
             pthread_t newthread;
             pthread_create(&newthread,NULL,sendandreceive[i],NULL);
 
-            pthread_mutex_lock(&logprotector);
-            sprintf(debugbuffer,"send scheduled - new thread with id: %d",(unsigned int) newthread);
-            logwriteln(debugfilename,debugbuffer);
-            pthread_mutex_unlock(&logprotector);
+            //pthread_mutex_lock(&logprotector);
+            //sprintf(debugbuffer,"send scheduled - new thread with id: %d",(unsigned int) newthread);
+            //logwriteln(debugfilename,debugbuffer);
+            //pthread_mutex_unlock(&logprotector);
 
         }
     }
+
+    //pthread_mutex_lock(&logprotector);
+    //logwriteln(debugfilename,"timer callback returning");
+    //pthread_mutex_unlock(&logprotector);
 
     return;
 }
@@ -845,10 +890,8 @@ int sendmessagetoinverter(int index, chosenmsg* compptr, int socket_desc)
     payloadsize = 6;
 
     pthread_mutex_lock(&llprotector);
-    pthread_mutex_lock(&logprotector);
-    currentptr = moveright(chosenperm);
+    currentptr = moveright(compptr);
     pthread_mutex_unlock(&llprotector);
-    pthread_mutex_unlock(&logprotector);
 
     while(keepgoing == 1)
     {
@@ -961,8 +1004,12 @@ void disassemblepacket(unsigned char *buffer, int index)
         pthread_mutex_unlock(&llprotector);
     }
     pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"processed message - about to exit thread %d",(unsigned int) pthread_self());
+    sprintf(debugbuffer,"processed message - about to exit thread %d",(int) pthread_self());
     logwriteln(debugfilename, debugbuffer);
+    pthread_mutex_unlock(&logprotector);
+
+    pthread_mutex_lock(&logprotector);
+    logwriteln(debugfilename,"but are we really about to exit?");
     pthread_mutex_unlock(&logprotector);
 
     return;
@@ -1509,6 +1556,8 @@ void messagehandler(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
 
     pthread_mutex_lock(&logprotector);
@@ -1558,7 +1607,7 @@ void messagehandler0(void)
     pthread_mutex_unlock(&logprotector);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1585,7 +1634,17 @@ void messagehandler0(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        pthread_mutex_lock(&logprotector);
+        logwriteln(debugfilename,"made it out of disassembly");
+        pthread_mutex_unlock(&logprotector);
+
+        gtilist[index].newdata = 1;
     }
+
+    pthread_mutex_lock(&logprotector);
+    logwriteln(debugfilename,"made it out of loop");
+    pthread_mutex_unlock(&logprotector);
 
     pthread_mutex_lock(&sockprotector);
     close(socket_desc);
@@ -1632,7 +1691,7 @@ void messagehandler1(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1659,6 +1718,8 @@ void messagehandler1(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -1702,7 +1763,7 @@ void messagehandler2(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1729,6 +1790,8 @@ void messagehandler2(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -1772,7 +1835,7 @@ void messagehandler3(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1799,6 +1862,8 @@ void messagehandler3(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -1842,7 +1907,7 @@ void messagehandler4(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1869,6 +1934,8 @@ void messagehandler4(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -1912,7 +1979,7 @@ void messagehandler5(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -1939,6 +2006,8 @@ void messagehandler5(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -1982,7 +2051,7 @@ void messagehandler6(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -2009,6 +2078,8 @@ void messagehandler6(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -2052,7 +2123,7 @@ void messagehandler7(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -2079,6 +2150,8 @@ void messagehandler7(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -2122,7 +2195,7 @@ void messagehandler8(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -2149,6 +2222,8 @@ void messagehandler8(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -2192,7 +2267,7 @@ void messagehandler9(void)
     logwriteln(debugfilename,debugbuffer);
 
     pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,gtilist[index].msgtypelistperm, socket_desc);
+    sendmessagetoinverter(index,schedmsgperm, socket_desc);
     pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
@@ -2219,6 +2294,8 @@ void messagehandler9(void)
         pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
         pthread_mutex_unlock(&dispaktprotector);
+
+        gtilist[index].newdata = 1;
     }
     close(socket_desc);
     pthread_mutex_lock(&logprotector);
@@ -2230,3 +2307,9 @@ void messagehandler9(void)
     pthread_exit(NULL);
 }
 
+void elapsedtime(struct timespec *tsnow, struct timespec *tselapsed)
+{
+    tselapsed->tv_sec = tsnow->tv_sec - tsstart.tv_sec;
+    tselapsed->tv_nsec = tsnow->tv_nsec - tsstart.tv_nsec;
+    return;
+}

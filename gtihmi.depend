@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1490723845 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
+1491594646 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/main.c
 	<time.h>
 	<stdio.h>
 	<gtk.h>
@@ -15,6 +15,7 @@
 	<errno.h>
 	<string.h>
 	<pthread.h>
+	<execinfo.h>
 	"gpdefs.h"
 	"gtihmi.h"
 	"logconf.h"
@@ -28,7 +29,7 @@
 
 1488754553 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gpdefs.h
 
-1490052332 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gtihmi.h
+1490805424 /home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/gtihmi.h
 	<gtk.h>
 	<math.h>
 	<sys/socket.h>
@@ -2665,8 +2666,10 @@
 	<time.h>
 	"logconf.h"
 
-1490055132 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logging.c
+1490987681 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/logging.c
 	<time.h>
+	<sys/timeb.h>
+	<sys/time.h>
 	"logconf.h"
 	"gtihmi.h"
 
@@ -2676,7 +2679,7 @@
 	"gpdefs.h"
 	"logconf.h"
 
-1490053634 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/xmllib.c
+1490806589 source:/home/jordan/Documents/GitRepositories/gtihmi_GTK/gtihmi/xmllib.c
 	<stdio.h>
 	"xmllib.h"
 	"gtihmi.h"

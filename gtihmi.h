@@ -28,6 +28,7 @@ typedef struct GTIinfo_t{
     char macaddr[17];
     int oneoffenable;
     int schedenable;
+    int newdata;
     int extant;
     short int lastseqnum;
     chosenmsg *msgtypelistperm;
