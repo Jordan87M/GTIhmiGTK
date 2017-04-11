@@ -111,30 +111,19 @@ GTIinfo gtilist[MAX_N_INVERTERS];
 int selected[MAX_N_INVERTERS];
 int chosen[MAX_MSG_COMP];
 //int socket_desc;
-volatile int timersetupflag = 0;
-volatile int timerteardownflag = 0;
 struct timespec tsstart;
-int socketsetupflag = 0;
+struct timespec lastmessagetime;
+int scheduledmessageflag;
 int chosenrecipient;
+int schedsocket_desc;
 chosenmsg *chosenperm;
 chosenmsg *schedmsgperm;
 gpheader globalhead = {.magic = GP_MAGIC,
                         .seqnum = INITIAL_SEQNUM,
                         .context = INVERTER_CONTEXT
                         };
-//guint timersource;
-timer_t schedtimer;
-pthread_t listenerthread;
-pthread_mutex_t sendrecprotector[MAX_N_INVERTERS];
-pthread_mutex_t sendmsgprotector;
-pthread_mutex_t dispaktprotector;
-pthread_mutex_t logprotector;
-pthread_mutex_t llprotector;
-pthread_mutex_t flipprotector;
-pthread_mutex_t sockprotector;
+
 void (*sendandreceive[MAX_N_INVERTERS])(void);
-
-
 
 int inverterinsertindex = 0;
 enum
@@ -183,22 +172,15 @@ int startcollection(void);
 int stopcollection(void);
 void checkrecbuffer(int);
 void disassemblepacket(unsigned char *buffer, int index);
-void listenerthreadroutine(void);
+//void listenerthreadroutine(void);
 gboolean displayupdate(gpointer nothing);
+gboolean scheduledmessageloop(gpointer unused);
 void elapsedtime(struct timespec *tsnow, struct timespec *tselapsed);
+void timebetween(struct timespec *then, struct timespec *now, struct timespec *result);
+long long int timespectous(struct timespec *ts);
 
 
 void messagehandler(void);
-void messagehandler0(void);
-void messagehandler1(void);
-void messagehandler2(void);
-void messagehandler3(void);
-void messagehandler4(void);
-void messagehandler5(void);
-void messagehandler6(void);
-void messagehandler7(void);
-void messagehandler8(void);
-void messagehandler9(void);
 
 void segvhandler(int sig)
 {
@@ -206,13 +188,11 @@ void segvhandler(int sig)
     int bufsize = 2048;
     int size;
     char buffer[bufsize];
-    pthread_mutex_lock(&logprotector);
     logwriteln(debugfilename,"SIGSEGV :(\n");
     size = backtrace(&buffer, bufsize);
     fp = fopen(debugfilename,"a");
     backtrace_symbols_fd(&buffer, size, fileno(fp));
     fclose(fp);
-    pthread_mutex_unlock(&logprotector);
     exit(0);
 }
 
@@ -260,22 +240,6 @@ int main(int argc, char *argv[])
         gtilist[i].msgtypelistperm = createnewchosendllist();
     }
 
-    //spawn thread to listen to signals -- must be done before opensocket()
-    sprintf(debugbuffer,"about to spawn listener thread from main thread (%d)",(int) pthread_self());
-    logwriteln(debugfilename,debugbuffer);
-    pthread_create(&listenerthread,NULL,listenerthreadroutine, NULL);
-
-    sendandreceive[0] = messagehandler0;
-    sendandreceive[1] = messagehandler1;
-    sendandreceive[2] = messagehandler2;
-    sendandreceive[3] = messagehandler3;
-    sendandreceive[4] = messagehandler4;
-    sendandreceive[5] = messagehandler5;
-    sendandreceive[6] = messagehandler6;
-    sendandreceive[7] = messagehandler7;
-    sendandreceive[8] = messagehandler8;
-    sendandreceive[9] = messagehandler9;
-
 
     app = gtk_application_new("sevelevlabs.gti.hmi",G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app,"activate",G_CALLBACK(activate), NULL);
@@ -290,7 +254,6 @@ int main(int argc, char *argv[])
 
     logwriteln(debugfilename,"bye!");
 
-    pthread_exit(NULL);
     return;
 }
 
@@ -560,9 +523,68 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(rectreeview),2,"Value",recrenderer,"text",COL_RECVALUE, NULL);
 
     gdk_threads_add_idle(displayupdate,NULL);
+    gdk_threads_add_idle(scheduledmessageloop,NULL);
 
     gtk_widget_show_all(window);
 
+}
+
+gboolean scheduledmessageloop(gpointer unused)
+{
+    int i;
+    char schedrecbuf[1024];
+    struct timespec now;
+    struct timespec telapsed;
+    long long int uselapsed;
+    int datapresent;
+
+    if(scheduledmessageflag)
+    {
+        for(i = 0; i < MAX_N_INVERTERS; i++)
+        {
+            if(gtilist[i].extant)
+            {
+                //is it time to send another message?
+                clock_gettime(1,&now);
+                timebetween(&lastmessagetime,&now,&telapsed);
+                if((uselapsed = timespectous(&telapsed)) > 1000000)
+                {
+                    sprintf(debugbuffer,"going to send a scheduled message %lld us after the previous one",uselapsed);
+                    logwriteln(debugfilename,debugbuffer);
+                    //send scheduled message
+                    sendmessagetoinverter(i,schedmsgperm, schedsocket_desc);
+                    clock_gettime(1,&lastmessagetime);
+                }
+
+                int slen = sizeof(gtilist[i].server);
+
+                if((datapresent = recvfrom(schedsocket_desc, schedrecbuf, 1024, 0, (struct sockaddr *)&gtilist[i].server, &slen)) < 1)
+                {
+                    //handle errors
+                    //ignore EWOULDBLOCK and EAGAIN because these are expected when data hasn't arrived yet
+                    if(errno != EWOULDBLOCK || errno != EAGAIN)
+                    {
+                        logwriteln(debugfilename,strerror(errno));
+                    }
+                }
+                else
+                {
+                    sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, i);
+                    logwriteln(debugfilename,debugbuffer);
+                    debugprinthex(schedrecbuf, datapresent);
+
+                    disassemblepacket(schedrecbuf,i);
+                }
+            }
+
+        }
+
+    }
+
+    usleep(10000);
+
+
+    return TRUE;
 }
 
 gboolean displayupdate(gpointer nothing)
@@ -586,9 +608,7 @@ gboolean displayupdate(gpointer nothing)
     {
         if(gtilist[i].extant == 1)
         {
-            pthread_mutex_lock(&llprotector);
             chosenmsg *current = gtilist[i].reclistperm;
-            pthread_mutex_unlock(&llprotector);
             do{
                 current = moveright(current);
                 if(current->data != -1)
@@ -614,9 +634,7 @@ gboolean displayupdate(gpointer nothing)
            chosenmsg *current = gtilist[i].reclistperm;
 
             do{
-                pthread_mutex_lock(&llprotector);
                 current = moveright(current);
-                pthread_mutex_unlock(&llprotector);
                 if(signallist[current->data].code == RESPONSE_PHASE_CODE)
                 {
                     gtk_list_store_set(store,gtilist[i].inviter,COL_PHASE,current->value,-1);
@@ -669,79 +687,6 @@ gboolean displayupdate(gpointer nothing)
     return TRUE;
 }
 
-void listenerthreadroutine(void)
-{
-    sprintf(debugbuffer,"listener thread running with id %d",(unsigned int) listenerthread);
-    logwriteln(debugfilename,debugbuffer);
-
-    struct sigaction sa;
-    sa.sa_handler = segvhandler;
-    sigaction(SIGSEGV,&sa,NULL);
-
-    //just wait for signals
-    while(1)
-    {
-        if(timersetupflag == 1)
-        {
-            struct sigevent sevp;
-            struct sigaction sa;
-            struct itimerspec new_value;
-
-            sa.sa_handler = sendregularcollectionmessagespawner;
-            //sa.sa_flags =
-
-            new_value.it_interval.tv_nsec = 500000000;
-            time_t sec = (time_t) 0;
-            new_value.it_interval.tv_sec = sec;
-            new_value.it_value.tv_nsec = 500000000;
-            new_value.it_value.tv_sec = sec;
-
-            #ifdef SYS_gettid
-            pid_t tid = syscall(SYS_gettid);
-            #else
-            #error "SYS_gettid unavailable on this system"
-            #endif
-
-            sevp.sigev_notify = 4;         //SIGEV_THREAD_ID defined to 4 SIGEV_SIGNAL defined to 0 in siginfo.h
-            sevp.sigev_signo = SIGRTMIN;
-            //sevp.sigev_value.sigev_notify_thread_id = listenerthread;
-            sevp._sigev_un._tid = tid;
-
-            //see if using POSIX timers helps
-            timer_create(1, &sevp, &schedtimer);    //CLOCK_MONOTONIC defined to 1 in uapi/linux/time.h
-
-            //designate handler for SIGEV
-            sigaction(SIGRTMIN,&sa,NULL);
-            timer_settime(schedtimer,0,&new_value,NULL);
-
-
-            timersetupflag = 0;
-        }
-
-        if(timerteardownflag == 1)
-        {
-            int retval;
-
-            retval = timer_delete(schedtimer);
-            pthread_mutex_lock(&logprotector);
-            if(retval < 0)
-            {
-                sprintf(debugbuffer,"timer_delete failed: %s",strerror(errno));
-                logwriteln(debugfilename,debugbuffer);
-            }
-            else
-            {
-                logwriteln(debugfilename,"deleted timer");
-            }
-            pthread_mutex_unlock(&logprotector);
-
-            timerteardownflag = 0;
-        }
-
-        sleep(1);
-    }
-}
-
 
 void value_edited_callback(GtkCellRendererText *cell, gchar *path_string, gchar *newtext, gpointer user_data)
 {
@@ -773,7 +718,6 @@ int sendoneoff(GtkWidget *widget, gpointer data)
     int retval;
     int i;
     int listempty = 1;
-    pthread_t newthread;
 
     for(i = 0; i < MAX_N_INVERTERS; i++)
     {
@@ -798,59 +742,49 @@ int sendoneoff(GtkWidget *widget, gpointer data)
     //retval = sendmessagetoinverter(index, chosenperm);
     chosenrecipient = index;
 
-    pthread_create(&newthread,NULL,messagehandler,NULL);
+    messagehandler();
 
     return 0;
 }
 
 int startcollection(void)
 {
-    timerteardownflag = 0;
-    timersetupflag = 1;
+    if(!scheduledmessageflag)
+    {
+        int on = 1;
+
+        schedsocket_desc = socket(AF_INET, SOCK_DGRAM, 0);
+        fcntl(schedsocket_desc,F_SETFL,O_NONBLOCK);
+        setsockopt(schedsocket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
+
+        if(schedsocket_desc == -1)
+        {
+            sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
+            logwriteln(debugfilename,debugbuffer);
+            return -1;
+        }
+        sprintf(debugbuffer, "starting scheduled messaging. opened socket with file description: %d", schedsocket_desc);
+        logwriteln(debugfilename,debugbuffer);
+
+        scheduledmessageflag = 1;
+        clock_gettime(1,&lastmessagetime);
+
+
+    }
 
     return 0;
 }
 
 int stopcollection(void)
 {
-    //g_source_remove(timersource);
-
-    timersetupflag = 0;
-    timerteardownflag = 1;
-    return 0;
-}
-
-void sendregularcollectionmessagespawner(int sig)
-{
-
-    int i;
-
-    //pthread_mutex_lock(&logprotector);
-    //sprintf(debugbuffer,"timer signal received by thread %d", (int) pthread_self());
-    //logwriteln(debugfilename,debugbuffer);
-    //pthread_mutex_unlock(&logprotector);
-
-
-    for(i = 0; i < MAX_N_INVERTERS; i++)
+    if(scheduledmessageflag)
     {
-        if(gtilist[i].extant == 1)
-        {
-            pthread_t newthread;
-            pthread_create(&newthread,NULL,sendandreceive[i],NULL);
-
-            //pthread_mutex_lock(&logprotector);
-            //sprintf(debugbuffer,"send scheduled - new thread with id: %d",(unsigned int) newthread);
-            //logwriteln(debugfilename,debugbuffer);
-            //pthread_mutex_unlock(&logprotector);
-
-        }
+        logwriteln(debugfilename,"stopping scheduled messaging");
+        close(schedsocket_desc);
+        scheduledmessageflag = 0;
     }
 
-    //pthread_mutex_lock(&logprotector);
-    //logwriteln(debugfilename,"timer callback returning");
-    //pthread_mutex_unlock(&logprotector);
-
-    return;
+    return 0;
 }
 
 
@@ -871,11 +805,8 @@ int sendmessagetoinverter(int index, chosenmsg* compptr, int socket_desc)
     unsigned short typecode;
     double val;
 
-
-    pthread_mutex_lock(&logprotector);
     sprintf(debugbuffer,"preparing to send message to inverter: %s",gtilist[index].name);
     logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
 
     magic = htons(globalhead.magic);
     context = globalhead.context;
@@ -889,26 +820,20 @@ int sendmessagetoinverter(int index, chosenmsg* compptr, int socket_desc)
 
     payloadsize = 6;
 
-    pthread_mutex_lock(&llprotector);
     currentptr = moveright(compptr);
-    pthread_mutex_unlock(&llprotector);
 
     while(keepgoing == 1)
     {
         //debugprintnodeinfo(currentptr);
         if(currentptr->data == -1)
         {
-            pthread_mutex_lock(&logprotector);
             logwriteln(debugfilename,"exhausted message type list...");
-            pthread_mutex_unlock(&logprotector);
             keepgoing = 0;
             break;
         }
         if(count > 10)
         {
-            pthread_mutex_lock(&logprotector);
             logwriteln(debugfilename, "problem: too many message types in list, truncating message");
-            pthread_mutex_unlock(&logprotector);
             keepgoing = 0;
             break;
         }
@@ -923,20 +848,14 @@ int sendmessagetoinverter(int index, chosenmsg* compptr, int socket_desc)
         //flipbytes(&val,8);
         memcpy(sendbuffer + VALUE_OFFSET + count*MULTICOMP_OFFSET,&val,8);
         count++;
-        pthread_mutex_lock(&llprotector);
-        pthread_mutex_lock(&logprotector);
         currentptr = moveright(currentptr);
-        pthread_mutex_unlock(&llprotector);
-        pthread_mutex_unlock(&logprotector);
         payloadsize += 10;
     }
     //now that all message components have been added, fill in the number of components in the header
     memcpy(sendbuffer + COMPN_OFFSET, &count,1);
 
     //print message in buffer as hex bytestream
-    pthread_mutex_lock(&logprotector);
     debugprinthex(sendbuffer,payloadsize);
-    pthread_mutex_unlock(&logprotector);
 
     //server.sin_addr.s_addr = inet_addr(gtilist[index].ipaddr);
     //server.sin_family = AF_INET;
@@ -944,18 +863,14 @@ int sendmessagetoinverter(int index, chosenmsg* compptr, int socket_desc)
     retval = sendto(socket_desc, sendbuffer, payloadsize,0,(struct sockaddr *)&gtilist[index].server,sizeof(gtilist[index].server));
     if(retval  == -1)
     {
-        pthread_mutex_lock(&logprotector);
         sprintf(debugbuffer,"sendto() failed : %s",strerror(errno));
         logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
         return -1;
     }
     else
     {
-        pthread_mutex_lock(&logprotector);
         sprintf(debugbuffer,"sendto() returns with value %d",retval);
         logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
     }
 
     gtilist[index].lastseqnum = seqnum;
@@ -987,9 +902,7 @@ void disassemblepacket(unsigned char *buffer, int index)
     memcpy(&seqnum,buffer + SEQN_OFFSET,2);
 
     //clear old received message components
-    pthread_mutex_lock(&llprotector);
     clearlist(gtilist[index].reclistperm);
-    pthread_mutex_unlock(&llprotector);
     for(i = 0; i < ncomps; i++)
     {
         memcpy(&responsetype,buffer + TYPE_OFFSET + i*MULTICOMP_OFFSET,2);
@@ -998,19 +911,10 @@ void disassemblepacket(unsigned char *buffer, int index)
         responsetype = ntohs(responsetype);
         flipbytes(&responsevalue,8);
 
-        pthread_mutex_lock(&llprotector);
         responsetypeindex = lookupbycode(responsetype);
         insertchosenmsg(gtilist[index].reclistperm,responsetypeindex,responsevalue);
-        pthread_mutex_unlock(&llprotector);
     }
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"processed message - about to exit thread %d",(int) pthread_self());
-    logwriteln(debugfilename, debugbuffer);
-    pthread_mutex_unlock(&logprotector);
 
-    pthread_mutex_lock(&logprotector);
-    logwriteln(debugfilename,"but are we really about to exit?");
-    pthread_mutex_unlock(&logprotector);
 
     return;
 }
@@ -1105,6 +1009,7 @@ int addnewinverter(GtkWidget *widget, gpointer data)
         char macaddr[17];
 
         char arpcommand[48];
+
 
         strcpy(name,gtk_entry_get_text(newnameentry));
 
@@ -1353,15 +1258,16 @@ int getselectedactive(void)
     GtkTreePath *activeselpath;
     GtkTreeIter activeseliter;
     GtkTreeModel *activemodel;
-    GList *activesellist;
+    //GList *activesellist;
      //find out which inverter, if any, has been selected
     activesel = gtk_tree_view_get_selection(activetree);
+
     if(activesel == NULL)
     {
         return -1;
     }
 
-    activesellist = gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
+    gtk_tree_selection_get_selected(activesel, &activemodel, &activeseliter);
     gtk_tree_model_get(activemodel,&activeseliter,COL_NAME,&name,COL_IPADDR,&ipaddr,COL_MACADDR,&macaddr,-1);
 
     //remove from gti structure list
@@ -1500,7 +1406,6 @@ void addmsgfromstruct(chosenmsg *chosen)
 
 void messagehandler(void)
 {
-    pthread_mutex_lock(&sendrecprotector[chosenrecipient]);
     int index = chosenrecipient;
     int on = 1;
     int socket_desc;
@@ -1517,20 +1422,14 @@ void messagehandler(void)
 
     if(socket_desc == -1)
     {
-        pthread_mutex_lock(&logprotector);
         sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
         logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_lock(&logprotector);
         return -1;
     }
-    pthread_mutex_lock(&logprotector);
     sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
     logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
 
-    pthread_mutex_lock(&sendmsgprotector);
     sendmessagetoinverter(index,chosenperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
 
     memset(recbuffer,0, 1024);
 
@@ -1538,773 +1437,24 @@ void messagehandler(void)
     datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
     if(datapresent == -1)
     {
-        pthread_mutex_lock(&logprotector);
         sprintf(debugbuffer,"no data from inverter %d", index);
         logwriteln(debugfilename,debugbuffer);
         sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
         logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
     }
     else
     {
-        pthread_mutex_lock(&logprotector);
         sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
         logwriteln(debugfilename,debugbuffer);
         debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
 
-        pthread_mutex_lock(&dispaktprotector);
         disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
 
         gtilist[index].newdata = 1;
     }
 
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"terminating thread %d", (int) pthread_self());
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
 
     close(socket_desc);
-    pthread_mutex_unlock(&sendrecprotector[chosenrecipient]);
-    pthread_exit(NULL);
-}
-
-void messagehandler0(void)
-{
-    int index = 0;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    pthread_mutex_lock(&sockprotector);
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-    pthread_mutex_unlock(&sockprotector);
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        pthread_mutex_lock(&logprotector);
-        logwriteln(debugfilename,"made it out of disassembly");
-        pthread_mutex_unlock(&logprotector);
-
-        gtilist[index].newdata = 1;
-    }
-
-    pthread_mutex_lock(&logprotector);
-    logwriteln(debugfilename,"made it out of loop");
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_lock(&sockprotector);
-    close(socket_desc);
-    pthread_mutex_unlock(&sockprotector);
-
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler1(void)
-{
-    int index = 1;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler2(void)
-{
-    int index = 2;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler3(void)
-{
-    int index = 3;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler4(void)
-{
-    int index = 4;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler5(void)
-{
-    int index = 5;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler6(void)
-{
-    int index = 6;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler7(void)
-{
-    int index = 7;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler8(void)
-{
-    int index = 8;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
-}
-
-void messagehandler9(void)
-{
-    int index = 9;
-
-    pthread_mutex_lock(&sendrecprotector[index]);
-
-    int on = 1;
-    int socket_desc;
-    char recbuffer[1024];
-    int datapresent;
-    int slen;
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-
-    socket_desc = socket(AF_INET, SOCK_DGRAM, 0);
-    setsockopt(socket_desc,SOL_SOCKET,SO_RCVTIMEO,(const char*)&tv,sizeof(struct timeval));
-    setsockopt(socket_desc,SOL_SOCKET,SO_BROADCAST,&on,sizeof(on));
-
-    if(socket_desc == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"could not open socket: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-        return -1;
-    }
-
-    sprintf(debugbuffer, "opened socket with file description: %d", socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-
-    pthread_mutex_lock(&sendmsgprotector);
-    sendmessagetoinverter(index,schedmsgperm, socket_desc);
-    pthread_mutex_unlock(&sendmsgprotector);
-
-    memset(recbuffer,0, 1024);
-
-    slen = sizeof(gtilist[index].server);
-    datapresent = recvfrom(socket_desc,recbuffer, 1024, 0,(struct sockaddr *)&gtilist[index].server,&slen);
-    if(datapresent == -1)
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"no data from inverter %d", index);
-        logwriteln(debugfilename,debugbuffer);
-        sprintf(debugbuffer,"here is the problem: %s",strerror(errno));
-        logwriteln(debugfilename,debugbuffer);
-        pthread_mutex_unlock(&logprotector);
-    }
-    else
-    {
-        pthread_mutex_lock(&logprotector);
-        sprintf(debugbuffer,"received %d bytes of data from %d. here is the payload bytestream: ", datapresent, index);
-        logwriteln(debugfilename,debugbuffer);
-        debugprinthex(recbuffer, datapresent);
-        pthread_mutex_unlock(&logprotector);
-
-        pthread_mutex_lock(&dispaktprotector);
-        disassemblepacket(recbuffer, index);
-        pthread_mutex_unlock(&dispaktprotector);
-
-        gtilist[index].newdata = 1;
-    }
-    close(socket_desc);
-    pthread_mutex_lock(&logprotector);
-    sprintf(debugbuffer,"closing socket with descriptor: %d",socket_desc);
-    logwriteln(debugfilename,debugbuffer);
-    pthread_mutex_unlock(&logprotector);
-
-    pthread_mutex_unlock(&sendrecprotector[index]);
-    pthread_exit(NULL);
 }
 
 void elapsedtime(struct timespec *tsnow, struct timespec *tselapsed)
@@ -2312,4 +1462,19 @@ void elapsedtime(struct timespec *tsnow, struct timespec *tselapsed)
     tselapsed->tv_sec = tsnow->tv_sec - tsstart.tv_sec;
     tselapsed->tv_nsec = tsnow->tv_nsec - tsstart.tv_nsec;
     return;
+}
+
+void timebetween(struct timespec *then, struct timespec *now, struct timespec *result)
+{
+    result->tv_sec = now->tv_sec - then->tv_sec;
+    result->tv_nsec = now->tv_nsec - then->tv_nsec;
+    return;
+}
+
+long long int timespectous(struct timespec *ts)
+{
+    long long int us;
+
+    us = (ts->tv_sec)*1000000 + (ts->tv_nsec)/1000;
+    return us;
 }
